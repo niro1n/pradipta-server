@@ -150,7 +150,9 @@ end
 function Player:SetMetaData(meta, val)
     if not meta or type(meta) ~= 'string' then return end
     if meta == 'hunger' or meta == 'thirst' then
-        val = math.min(100, math.max(0, val))
+        val = 100
+    elseif meta == 'stress' then
+        val = 0
     end
     self.PlayerData.metadata[meta] = val
     self:UpdateClient('metadata', self.PlayerData.metadata)
@@ -699,5 +701,3 @@ end)
 exports('AddPlayerField', function(ids, fieldName, data)
     QBCore.Functions.AddPlayerField(ids, fieldName, data)
 end)
-
-PaycheckInterval()

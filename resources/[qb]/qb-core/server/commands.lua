@@ -243,12 +243,6 @@ end, 'admin')
 
 -- Job
 
-QBCore.Commands.Add('job', Lang:t('command.job.help'), {}, false, function(source)
-    local Player = QBCore.Functions.GetPlayer(source)
-    if not Player then return end
-    local PlayerJob = Player.PlayerData.job
-    TriggerClientEvent('QBCore:Notify', source, Lang:t('info.job_info', { value = PlayerJob.label, value2 = PlayerJob.grade.name, value3 = PlayerJob.onduty }))
-end, 'user')
 
 QBCore.Commands.Add('setjob', Lang:t('command.setjob.help'), { { name = Lang:t('command.setjob.params.id.name'), help = Lang:t('command.setjob.params.id.help') }, { name = Lang:t('command.setjob.params.job.name'), help = Lang:t('command.setjob.params.job.help') }, { name = Lang:t('command.setjob.params.grade.name'), help = Lang:t('command.setjob.params.grade.help') } }, true, function(source, args)
     local Player = QBCore.Functions.GetPlayer(tonumber(args[1]))

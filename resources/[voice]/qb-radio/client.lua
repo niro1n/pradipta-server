@@ -271,3 +271,7 @@ CreateThread(function()
         end
     end
 end)
+
+RegisterCommand('radio', function()
+    TriggerEvent('qb-radio:use')
+end, false)

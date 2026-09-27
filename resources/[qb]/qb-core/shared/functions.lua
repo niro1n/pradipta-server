@@ -3,6 +3,7 @@ local NumberCharset = {}
 
 QBCore.Shared.StarterItems = {
     ['phone'] = { amount = 1, item = 'phone' },
+    ['radio'] = { amount = 1, item = 'radio' },
     ['id_card'] = { amount = 1, item = 'id_card' },
     ['driver_license'] = { amount = 1, item = 'driver_license' },
 }

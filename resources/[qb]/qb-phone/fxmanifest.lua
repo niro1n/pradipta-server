@@ -6,8 +6,7 @@ description 'Allows players to access a phone to interact with various apps and 
 version '1.5.0'
 
 shared_scripts {
-    'config.lua',
-    '@qb-apartments/config.lua'
+    'config.lua'
 }
 
 client_script 'client.lua'

@@ -1179,10 +1179,12 @@ RegisterNUICallback('SetGPSLocation', function(data, cb)
 end)
 
 RegisterNUICallback('SetApartmentLocation', function(data, cb)
-    local ApartmentData = data.data.appartmentdata
-    local TypeData = Apartments.Locations[ApartmentData.type]
-    SetNewWaypoint(TypeData.coords.enter.x, TypeData.coords.enter.y)
-    QBCore.Functions.Notify('GPS has been set!', 'success')
+    local ApartmentData = data and data.data and data.data.appartmentdata
+    if Apartments and Apartments.Locations and ApartmentData and Apartments.Locations[ApartmentData.type] then
+        local TypeData = Apartments.Locations[ApartmentData.type]
+        SetNewWaypoint(TypeData.coords.enter.x, TypeData.coords.enter.y)
+        QBCore.Functions.Notify('GPS has been set!', 'success')
+    end
     cb('ok')
 end)
 

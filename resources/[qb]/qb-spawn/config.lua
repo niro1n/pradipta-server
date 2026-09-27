@@ -1,4 +1,5 @@
 QB = {}
+Apartments = Apartments or { Locations = {}, Starting = false }
 
 QB.Spawns = {
     citygarage = {

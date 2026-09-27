@@ -44,7 +44,7 @@ Config.Products = {
         { name = 'lockpick',          price = 200, amount = 50 },
         { name = 'weapon_wrench',     price = 250, amount = 250 },
         { name = 'weapon_hammer',     price = 250, amount = 250 },
-        { name = 'repairkit',         price = 250, amount = 50, requiredJob = { 'mechanic', 'police' } },
+        { name = 'repairkit',         price = 250, amount = 50 },
         { name = 'screwdriverset',    price = 350, amount = 50 },
         { name = 'phone',             price = 850, amount = 50 },
         { name = 'radio',             price = 250, amount = 50 },
@@ -55,7 +55,7 @@ Config.Products = {
         { name = 'firework4',         price = 50,  amount = 50 },
         { name = 'fitbit',            price = 400, amount = 150 },
         { name = 'cleaningkit',       price = 150, amount = 150 },
-        { name = 'advancedrepairkit', price = 500, amount = 50, requiredJob = 'mechanic' },
+        { name = 'advancedrepairkit', price = 500, amount = 50 },
     },
     ['weedshop'] = {
         { name = 'joint',          price = 10,  amount = 50 },

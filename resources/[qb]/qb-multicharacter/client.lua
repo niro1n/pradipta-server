@@ -179,9 +179,9 @@ RegisterNetEvent('qb-multicharacter:client:spawnLastLocation', function(coords, 
             local insideMeta = PlayerData.metadata['inside']
             DoScreenFadeOut(500)
 
-            if insideMeta.house then
+            if insideMeta and insideMeta.house then
                 TriggerEvent('qb-houses:client:LastLocationHouse', insideMeta.house)
-            elseif insideMeta.apartment.apartmentType and insideMeta.apartment.apartmentId then
+            elseif insideMeta and insideMeta.apartment and insideMeta.apartment.apartmentType and insideMeta.apartment.apartmentId then
                 TriggerEvent('qb-apartments:client:LastLocationHouse', insideMeta.apartment.apartmentType, insideMeta.apartment.apartmentId)
             else
                 SetEntityCoords(ped, coords.x, coords.y, coords.z)

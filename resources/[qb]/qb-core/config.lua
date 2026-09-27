@@ -10,12 +10,12 @@ QBCore.Config.Money = {}
 QBCore.Config.Money.MoneyTypes = { cash = 500, bank = 5000, crypto = 0 } -- type = startamount - Add or remove money types for your server (for ex. blackmoney = 0), remember once added it will not be removed from the database!
 QBCore.Config.Money.DontAllowMinus = { 'cash', 'crypto' }                -- Money that is not allowed going in minus
 QBCore.Config.Money.MinusLimit = -5000                                   -- The maximum amount you can be negative
-QBCore.Config.Money.PayCheckTimeOut = 10                                 -- The time in minutes that it will give the paycheck
-QBCore.Config.Money.PayCheckSociety = false                              -- If true paycheck will come from the society account that the player is employed at, requires qb-management
+QBCore.Config.Money.PayCheckTimeOut = 0
+QBCore.Config.Money.PayCheckSociety = false
 
 QBCore.Config.Player = {}
-QBCore.Config.Player.HungerRate = 4.2 -- Rate at which hunger goes down.
-QBCore.Config.Player.ThirstRate = 3.8 -- Rate at which thirst goes down.
+QBCore.Config.Player.HungerRate = 0
+QBCore.Config.Player.ThirstRate = 0
 QBCore.Config.Player.Bloodtypes = {
     'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-',
 }

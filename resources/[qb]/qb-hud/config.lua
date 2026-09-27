@@ -4,8 +4,8 @@ Config.StressChance = 0.1         -- Default: 10% -- Percentage Stress Chance Wh
 Config.UseMPH = true              -- If true speed math will be done as MPH, if false KPH will be used (YOU HAVE TO CHANGE CONTENT IN STYLES.CSS TO DISPLAY THE CORRECT TEXT)
 Config.MinimumStress = 50         -- Minimum Stress Level For Screen Shaking
 Config.MinimumSpeedUnbuckled = 50 -- Going Over This Speed Unbuckled Will Cause Stress
-Config.MinimumSpeed = 100         -- Going Over This Speed While Buckled Will Cause Stress
-Config.DisableStress = false      -- If true will disable stress completely for all players
+Config.MinimumSpeed = 100
+Config.DisableStress = true
 
 -- Stress
 Config.WhitelistedWeaponArmed = { -- Disable showing armed icon from weapons in this table

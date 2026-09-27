@@ -316,7 +316,9 @@ QBCore.Functions.CreateCallback('qb-phone:server:PayInvoice', function(source, c
                     exports['qb-phone']:sendNewMailToOffline(sendercitizenid, invoiceMailData)
                 end
                 TriggerEvent('qb-phone:server:paidInvoice', source, invoiceId)
-                exports['qb-banking']:AddMoney(society, amount, 'Phone invoice')
+                if GetResourceState('qb-banking') == 'started' then
+                    exports['qb-banking']:AddMoney(society, amount, 'Phone invoice')
+                end
                 cb(true)
                 return
             end
@@ -405,7 +407,10 @@ QBCore.Functions.CreateCallback('qb-phone:server:FetchResult', function(_, cb, s
     else
         query = query .. ' OR `charinfo` LIKE "%' .. search .. '%"'
     end
-    local ApartmentData = MySQL.query.await('SELECT * FROM apartments', {})
+    local ApartmentData = {}
+    if GetResourceState('qb-apartments') == 'started' then
+        ApartmentData = MySQL.query.await('SELECT * FROM apartments', {}) or {}
+    end
     for k, v in pairs(ApartmentData) do
         ApaData[v.citizenid] = ApartmentData[k]
     end

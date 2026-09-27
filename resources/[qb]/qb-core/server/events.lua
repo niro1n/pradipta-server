@@ -159,18 +159,10 @@ RegisterNetEvent('QBCore:UpdatePlayer', function()
     updateCooldowns[src] = now
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
-    local newHunger = Player.PlayerData.metadata['hunger'] - QBCore.Config.Player.HungerRate
-    local newThirst = Player.PlayerData.metadata['thirst'] - QBCore.Config.Player.ThirstRate
-    if newHunger <= 0 then
-        newHunger = 0
-    end
-    if newThirst <= 0 then
-        newThirst = 0
-    end
-    Player.PlayerData.metadata['hunger'] = newHunger
-    Player.PlayerData.metadata['thirst'] = newThirst
+    Player.PlayerData.metadata['hunger'] = 100
+    Player.PlayerData.metadata['thirst'] = 100
     Player.Functions.UpdateClient('metadata', Player.PlayerData.metadata)
-    TriggerClientEvent('hud:client:UpdateNeeds', src, newHunger, newThirst)
+    TriggerClientEvent('hud:client:UpdateNeeds', src, 100, 100)
     Player.Functions.Save()
 end)
 

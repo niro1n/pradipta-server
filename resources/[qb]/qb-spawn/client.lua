@@ -178,10 +178,10 @@ RegisterNUICallback('spawnplayer', function(data, cb)
             FreezeEntityPosition(ped, false)
         end)
 
-        if insideMeta.house ~= nil then
+        if insideMeta and insideMeta.house ~= nil then
             local houseId = insideMeta.house
             TriggerEvent('qb-houses:client:LastLocationHouse', houseId)
-        elseif insideMeta.apartment.apartmentType ~= nil or insideMeta.apartment.apartmentId ~= nil then
+        elseif insideMeta and insideMeta.apartment and (insideMeta.apartment.apartmentType ~= nil or insideMeta.apartment.apartmentId ~= nil) then
             local apartmentType = insideMeta.apartment.apartmentType
             local apartmentId = insideMeta.apartment.apartmentId
             TriggerEvent('qb-apartments:client:LastLocationHouse', apartmentType, apartmentId)

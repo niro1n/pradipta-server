@@ -1,4 +1,5 @@
 Config = Config or {}
+Apartments = Apartments or { Locations = {} }
 Config.BillingCommissions = { -- This is a percentage (0.10) == 10%
     mechanic = 0.10
 }
@@ -118,27 +119,6 @@ Config.PhoneApplications = {
         slot = 10,
         Alerts = 0,
     },
-    ['houses'] = {
-        app = 'houses',
-        color = '#27ae60',
-        icon = 'fas fa-home',
-        tooltipText = 'Houses',
-        job = false,
-        blockedjobs = {},
-        slot = 11,
-        Alerts = 0,
-    },
-    ['lawyers'] = {
-        app = 'lawyers',
-        color = '#26d4ce',
-        icon = 'fas fa-briefcase',
-        tooltipText = 'Services',
-        tooltipPos = 'bottom',
-        job = false,
-        blockedjobs = {},
-        slot = 12,
-        Alerts = 0,
-    },
     ['gallery'] = {
         app = 'gallery',
         color = '#AC1D2C',
@@ -147,7 +127,7 @@ Config.PhoneApplications = {
         tooltipPos = 'bottom',
         job = false,
         blockedjobs = {},
-        slot = 13,
+        slot = 11,
         Alerts = 0,
     },
     ['camera'] = {
@@ -158,17 +138,7 @@ Config.PhoneApplications = {
         tooltipPos = 'bottom',
         job = false,
         blockedjobs = {},
-        slot = 14,
-        Alerts = 0,
-    },
-    ['meos'] = {
-        app = 'meos',
-        color = '#004682',
-        icon = 'fas fa-ad',
-        tooltipText = 'MDT',
-        job = 'police',
-        blockedjobs = {},
-        slot = 15,
+        slot = 12,
         Alerts = 0,
     },
 }

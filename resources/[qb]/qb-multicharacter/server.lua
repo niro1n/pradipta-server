@@ -28,6 +28,7 @@ local function GiveStarterItems(source)
 end
 
 local function loadHouseData(src)
+    if GetResourceState('qb-houses') ~= 'started' then return end
     local HouseGarages = {}
     local Houses = {}
     local result = MySQL.query.await('SELECT * FROM houselocations', {})
@@ -120,7 +121,7 @@ RegisterNetEvent('qb-multicharacter:server:createCharacter', function(data)
         repeat
             Wait(10)
         until hasDonePreloading[src]
-        if GetResourceState('qb-apartments') == 'started' and Apartments.Starting then
+        if GetResourceState('qb-apartments') == 'started' and Apartments and Apartments.Starting then
             local randbucket = (GetPlayerPed(src) .. math.random(1, 999))
             SetPlayerRoutingBucket(src, randbucket)
             print('^2[qb-core]^7 ' .. GetPlayerName(src) .. ' has successfully loaded!')
