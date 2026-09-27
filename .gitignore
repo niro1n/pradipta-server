@@ -1,0 +1,20 @@
+# Temporary & Cache (WAJIB DI-IGNORE)
+cache/
+.replxx_history
+*.log
+*.tmp
+
+# Backup files
+*.bkp
+*.backup
+*.bak
+server.cfg.bkp
+
+# Secrets & Credentials
+credentials.cfg
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
