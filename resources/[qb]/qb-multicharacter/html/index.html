@@ -6,6 +6,17 @@
     <title>PRADIPTA — Pilih Karakter</title>
     <link rel="stylesheet" href="reset.css">
     <link rel="stylesheet" href="style.css">
+    <script>
+        window.pendingEvents = [];
+        window.vueMessageHandler = null;
+        window.addEventListener("message", function(event) {
+            if (window.vueMessageHandler) {
+                window.vueMessageHandler(event);
+            } else {
+                window.pendingEvents.push(event);
+            }
+        });
+    </script>
 </head>
 <body>
     <div id="app" v-cloak>

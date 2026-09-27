@@ -1,6 +1,8 @@
 local cam = nil
 local charPed = nil
-local loadScreenCheckState = false
+local isNuiReady = false
+local isUiActive = false
+local isMenuOpen = false
 local QBCore = exports['qb-core']:GetCoreObject({ 'Functions' })
 local cached_player_skins = {}
 
@@ -68,29 +70,56 @@ local function skyCam(bool)
 end
 
 local function openCharMenu(bool)
-    QBCore.Functions.TriggerCallback('qb-multicharacter:server:GetNumberOfCharacters', function(result, countries)
-        local translations = {}
-        for k in pairs(Lang.fallback and Lang.fallback.phrases or Lang.phrases) do
-            if k:sub(0, ('ui.'):len()) then
-                translations[k:sub(('ui.'):len() + 1)] = Lang:t(k)
-            end
+    isMenuOpen = bool
+    if bool then
+        -- Ensure NUI is ready before firing message
+        local startWait = GetGameTimer()
+        while not isNuiReady and (GetGameTimer() - startWait) < 4000 do
+            Wait(50)
         end
-        SetNuiFocus(bool, bool)
+
+        QBCore.Functions.TriggerCallback('qb-multicharacter:server:GetNumberOfCharacters', function(result, countries)
+            local translations = {}
+            for k in pairs(Lang.fallback and Lang.fallback.phrases or Lang.phrases) do
+                if k:sub(0, ('ui.'):len()) then
+                    translations[k:sub(('ui.'):len() + 1)] = Lang:t(k)
+                end
+            end
+            local uiData = {
+                action = 'ui',
+                customNationality = Config.customNationality,
+                toggle = true,
+                nChar = result,
+                enableDeleteButton = Config.EnableDeleteButton,
+                translations = translations,
+                countries = countries,
+            }
+            skyCam(true)
+            SetNuiFocus(true, true)
+            SendNUIMessage(uiData)
+
+            -- Active watchdog: resend message and refocus if NUI didn't activate
+            CreateThread(function()
+                local retries = 0
+                while isMenuOpen and not isUiActive and retries < 8 do
+                    Wait(750)
+                    if isMenuOpen and not isUiActive then
+                        retries = retries + 1
+                        SetNuiFocus(true, true)
+                        SendNUIMessage(uiData)
+                    end
+                end
+            end)
+        end)
+    else
+        isUiActive = false
+        SetNuiFocus(false, false)
         SendNUIMessage({
             action = 'ui',
-            customNationality = Config.customNationality,
-            toggle = bool,
-            nChar = result,
-            enableDeleteButton = Config.EnableDeleteButton,
-            translations = translations,
-            countries = countries,
+            toggle = false
         })
-        skyCam(bool)
-        if not loadScreenCheckState then
-            ShutdownLoadingScreenNui()
-            loadScreenCheckState = true
-        end
-    end)
+        skyCam(false)
+    end
 end
 
 -- Events
@@ -119,19 +148,21 @@ RegisterNetEvent('qb-multicharacter:client:closeNUI', function()
 end)
 
 RegisterNetEvent('qb-multicharacter:client:chooseChar', function()
+    isUiActive = false
     SetNuiFocus(false, false)
     DoScreenFadeOut(10)
-    Wait(1000)
+    Wait(500)
     local interior = GetInteriorAtCoords(Config.Interior.x, Config.Interior.y, Config.Interior.z - 18.9)
     LoadInterior(interior)
     while not IsInteriorReady(interior) do
-        Wait(1000)
+        Wait(250)
     end
     FreezeEntityPosition(PlayerPedId(), true)
     SetEntityCoords(PlayerPedId(), Config.HiddenCoords.x, Config.HiddenCoords.y, Config.HiddenCoords.z)
-    Wait(1500)
+    Wait(500)
     ShutdownLoadingScreen()
     ShutdownLoadingScreenNui()
+    Wait(250)
     openCharMenu(true)
 end)
 
@@ -168,10 +199,22 @@ end)
 
 -- NUI Callbacks
 
-RegisterNUICallback('closeUI', function(_, cb)
-    local cData = data.cData
+RegisterNUICallback('nuiReady', function(_, cb)
+    isNuiReady = true
+    cb('ok')
+end)
+
+RegisterNUICallback('uiLoaded', function(_, cb)
+    isUiActive = true
+    cb('ok')
+end)
+
+RegisterNUICallback('closeUI', function(data, cb)
+    local cData = data and data.cData
     DoScreenFadeOut(10)
-    TriggerServerEvent('qb-multicharacter:server:loadUserData', cData)
+    if cData then
+        TriggerServerEvent('qb-multicharacter:server:loadUserData', cData)
+    end
     openCharMenu(false)
     SetEntityAsMissionEntity(charPed, true, true)
     DeleteEntity(charPed)
@@ -273,3 +316,12 @@ RegisterNUICallback('removeCharacter', function(data, cb)
     TriggerEvent('qb-multicharacter:client:chooseChar')
     cb('ok')
 end)
+
+-- Recovery Commands (in case of NUI desync)
+RegisterCommand('fixchar', function()
+    TriggerEvent('qb-multicharacter:client:chooseChar')
+end, false)
+
+RegisterCommand('loadchar', function()
+    TriggerEvent('qb-multicharacter:client:chooseChar')
+end, false)

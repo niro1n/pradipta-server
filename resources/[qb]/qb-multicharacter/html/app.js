@@ -8,14 +8,15 @@ if (typeof axios === "undefined") {
     };
 }
 
-let pendingEvents = [];
-let vueMessageHandler = null;
+if (!window.pendingEvents) {
+    window.pendingEvents = [];
+}
 
 window.addEventListener("message", (event) => {
-    if (vueMessageHandler) {
-        vueMessageHandler(event);
+    if (window.vueMessageHandler) {
+        window.vueMessageHandler(event);
     } else {
-        pendingEvents.push(event);
+        window.pendingEvents.push(event);
     }
 });
 
@@ -169,7 +170,7 @@ function initMulticharacter() {
                 initializeValidator();
             }
 
-            vueMessageHandler = (event) => {
+            window.vueMessageHandler = (event) => {
                 const data = event.data;
                 if (!data) return;
 
@@ -196,7 +197,21 @@ function initMulticharacter() {
                         this.show.loading = true;
                         this.loadingText = this.translate("retrieving_characters") || "Memuat karakter...";
 
+                        // Signal client Lua that UI received the open instruction
+                        fetch("https://qb-multicharacter/uiLoaded", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({})
+                        }).catch(() => {});
+
                         axios.post("https://qb-multicharacter/setupCharacters");
+
+                        // Safety timer: if setupCharacters lags or drops, retry automatically
+                        setTimeout(() => {
+                            if (this.show.loading) {
+                                axios.post("https://qb-multicharacter/setupCharacters");
+                            }
+                        }, 2500);
                         break;
 
                     case "setupCharacters":
@@ -227,9 +242,17 @@ function initMulticharacter() {
                 }
             };
 
-            while (pendingEvents.length > 0) {
-                vueMessageHandler(pendingEvents.shift());
+            // Process any buffered messages that arrived during page load
+            while (window.pendingEvents && window.pendingEvents.length > 0) {
+                window.vueMessageHandler(window.pendingEvents.shift());
             }
+
+            // Signal client Lua that NUI DOM and event listeners are fully ready
+            fetch("https://qb-multicharacter/nuiReady", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({})
+            }).catch(() => {});
         },
     });
 }
