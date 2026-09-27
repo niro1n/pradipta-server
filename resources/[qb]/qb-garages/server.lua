@@ -178,6 +178,20 @@ end)
 
 -- Events
 
+RegisterNetEvent('qb-garages:server:SaveVehicleProps', function(vehicleProps)
+    local src = source
+    local Player = exports['qb-core']:GetPlayer(src)
+    if not Player or not vehicleProps or not vehicleProps.plate then return end
+    MySQL.update('UPDATE player_vehicles SET mods = ? WHERE plate = ?', { json.encode(vehicleProps), vehicleProps.plate })
+end)
+
+RegisterNetEvent('qb-mechanicjob:server:SaveVehicleProps', function(vehicleProps)
+    local src = source
+    local Player = exports['qb-core']:GetPlayer(src)
+    if not Player or not vehicleProps or not vehicleProps.plate then return end
+    MySQL.update('UPDATE player_vehicles SET mods = ? WHERE plate = ?', { json.encode(vehicleProps), vehicleProps.plate })
+end)
+
 RegisterNetEvent('qb-garages:server:updateVehicleStats', function(plate, fuel, engine, body)
     local src = source
     local Player = exports['qb-core']:GetPlayer(src)

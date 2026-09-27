@@ -14,6 +14,10 @@ QBCore.Functions.CreateCallback('qb-fuel:server:refillVehicle', function(src, cb
     end
 
     local finalPrice = litres * Config.FuelPrice
+    if finalPrice <= 0 then
+        cb(true)
+        return
+    end
     if Player.PlayerData.money[Config.MoneyType] >= finalPrice then
         cb(Player.RemoveMoney(Config.MoneyType, finalPrice, 'refuel-vehicle'))
     else
@@ -26,7 +30,7 @@ RegisterServerEvent('qb-fuel:server:buyJerryCan', function()
     local Player = exports['qb-core']:GetPlayer(src)
     if not Player then return end
 
-    if Player.RemoveMoney(Config.MoneyType, Config.JerryCanCost, 'buy-jerry-can') then
+    if Config.JerryCanCost <= 0 or Player.RemoveMoney(Config.MoneyType, Config.JerryCanCost, 'buy-jerry-can') then
         Player.AddItem('weapon_petrolcan', 1, nil, { fuel = Config.JerryCanLitre, ammo = Config.JerryCanLitre })
     end
 end)
@@ -39,7 +43,7 @@ RegisterServerEvent('qb-fuel:server:refillJerryCan', function()
     local jerryCan = Player.GetItemByName('weapon_petrolcan')
     if not jerryCan then return Player.Notify(Lang:t('error.no_jerrycan'), 'error') end
 
-    if Player.RemoveMoney(Config.MoneyType, Config.JerryCanRefillCost, 'refill-jerry-can') then
+    if Config.JerryCanRefillCost <= 0 or Player.RemoveMoney(Config.MoneyType, Config.JerryCanRefillCost, 'refill-jerry-can') then
         jerryCan.info.fuel = Config.JerryCanLitre
         jerryCan.info.ammo = Config.JerryCanLitre
         Player.RemoveItem('weapon_petrolcan', 1, jerryCan.slot)

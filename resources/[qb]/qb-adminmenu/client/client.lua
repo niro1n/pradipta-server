@@ -67,13 +67,15 @@ menu1:AddButton({
     description = Lang:t('desc.vehicles_desc')
 })
 
---dealer list
-local menu1_dealer_list = menu1:AddButton({
-    icon = '💊',
-    label = Lang:t('menu.dealer_list'),
-    value = menu6,
-    description = Lang:t('desc.dealer_desc')
-})
+local menu1_dealer_list
+if GetResourceState('qb-drugs') == 'started' then
+    menu1_dealer_list = menu1:AddButton({
+        icon = '💊',
+        label = Lang:t('menu.dealer_list'),
+        value = menu6,
+        description = Lang:t('desc.dealer_desc')
+    })
+end
 
 --developer options
 menu1:AddButton({
@@ -1237,19 +1239,21 @@ local function OpenDealerMenu(dealer)
     end
 end
 
-menu1_dealer_list:On('Select', function(_)
-    menu6:ClearItems()
-    QBCore.Functions.TriggerCallback('test:getdealers', function(dealers)
-        for _, v in pairs(dealers) do
-            menu6:AddButton({
-                label = v['name'],
-                value = v,
-                description = Lang:t('menu.dealer_name'),
-                select = function(btn)
-                    local select = btn.Value
-                    OpenDealerMenu(select)
-                end
-            })
-        end
+if menu1_dealer_list then
+    menu1_dealer_list:On('Select', function(_)
+        menu6:ClearItems()
+        QBCore.Functions.TriggerCallback('test:getdealers', function(dealers)
+            for _, v in pairs(dealers) do
+                menu6:AddButton({
+                    label = v['name'],
+                    value = v,
+                    description = Lang:t('menu.dealer_name'),
+                    select = function(btn)
+                        local select = btn.Value
+                        OpenDealerMenu(select)
+                    end
+                })
+            end
+        end)
     end)
-end)
+end

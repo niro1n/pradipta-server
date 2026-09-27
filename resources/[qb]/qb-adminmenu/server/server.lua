@@ -38,9 +38,12 @@ function GetQBPlayers()
     return playerReturn
 end
 
--- Get Dealers
 QBCore.Functions.CreateCallback('test:getdealers', function(_, cb)
-    cb(exports['qb-drugs']:GetDealers())
+    if GetResourceState('qb-drugs') == 'started' then
+        cb(exports['qb-drugs']:GetDealers())
+    else
+        cb({})
+    end
 end)
 
 -- Get Players

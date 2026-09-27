@@ -947,27 +947,43 @@ RegisterNUICallback('DeleteContact', function(data, cb)
 end)
 
 RegisterNUICallback('GetCryptoData', function(data, cb)
-    QBCore.Functions.TriggerCallback('qb-crypto:server:GetCryptoData', function(CryptoData)
-        cb(CryptoData)
-    end, data.crypto)
+    if GetResourceState('qb-crypto') == 'started' then
+        QBCore.Functions.TriggerCallback('qb-crypto:server:GetCryptoData', function(CryptoData)
+            cb(CryptoData)
+        end, data.crypto)
+    else
+        cb(nil)
+    end
 end)
 
 RegisterNUICallback('BuyCrypto', function(data, cb)
-    QBCore.Functions.TriggerCallback('qb-crypto:server:BuyCrypto', function(CryptoData)
-        cb(CryptoData)
-    end, data)
+    if GetResourceState('qb-crypto') == 'started' then
+        QBCore.Functions.TriggerCallback('qb-crypto:server:BuyCrypto', function(CryptoData)
+            cb(CryptoData)
+        end, data)
+    else
+        cb(nil)
+    end
 end)
 
 RegisterNUICallback('SellCrypto', function(data, cb)
-    QBCore.Functions.TriggerCallback('qb-crypto:server:SellCrypto', function(CryptoData)
-        cb(CryptoData)
-    end, data)
+    if GetResourceState('qb-crypto') == 'started' then
+        QBCore.Functions.TriggerCallback('qb-crypto:server:SellCrypto', function(CryptoData)
+            cb(CryptoData)
+        end, data)
+    else
+        cb(nil)
+    end
 end)
 
 RegisterNUICallback('TransferCrypto', function(data, cb)
-    QBCore.Functions.TriggerCallback('qb-crypto:server:TransferCrypto', function(CryptoData)
-        cb(CryptoData)
-    end, data)
+    if GetResourceState('qb-crypto') == 'started' then
+        QBCore.Functions.TriggerCallback('qb-crypto:server:TransferCrypto', function(CryptoData)
+            cb(CryptoData)
+        end, data)
+    else
+        cb(nil)
+    end
 end)
 
 RegisterNUICallback('GetCryptoTransactions', function(_, cb)
