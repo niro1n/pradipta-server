@@ -1,73 +1,56 @@
 local Translations = {
     notifications = {
-        ["char_deleted"] = "Character deleted!",
-        ["deleted_other_char"] = "You successfully deleted the character with citizen id %{citizenid}.",
-        ["forgot_citizenid"] = "You forgot to input a citizen id!",
+        ["char_deleted"] = "Karakter berhasil dihapus!",
+        ["deleted_other_char"] = "Berhasil menghapus karakter dengan ID %{citizenid}.",
+        ["forgot_citizenid"] = "ID Citizen belum diisi!",
     },
 
     commands = {
-        -- /deletechar
-        ["deletechar_description"] = "Deletes another players character",
-        ["citizenid"] = "Citizen ID",
-        ["citizenid_help"] = "The Citizen ID of the character you want to delete",
-
-        -- /logout
-        ["logout_description"] = "Logout of Character (Admin Only)",
-
-        -- /closeNUI
-        ["closeNUI_description"] = "Close Multi NUI"
+        ["deletechar_description"] = "Hapus karakter pemain lain",
+        ["citizenid"] = "ID Citizen",
+        ["citizenid_help"] = "ID Citizen dari karakter yang ingin dihapus",
+        ["logout_description"] = "Keluar dari karakter",
+        ["closeNUI_description"] = "Tutup menu"
     },
 
     misc = {
-        ["droppedplayer"] = "You have disconnected from QBCore"
+        ["droppedplayer"] = "Terputus dari server"
     },
 
     ui = {
-        -- Main
-        characters_header = "My Characters",
-        emptyslot = "Empty Slot",
-        play_button = "Play",
-        create_button = "Create Character",
-        delete_button = "Delete Character",
-
-        -- Character Information
-        charinfo_header = "Character Information",
-        charinfo_description = "Select a character slot to see all information about your character.",
-        name = "Name",
-        male = "Male",
-        female = "Female",
-        firstname = "First Name",
-        lastname = "Last Name",
-        nationality = "Nationality",
-        gender = "Gender",
-        birthdate = "Birthdate",
-        job = "Job",
-        jobgrade = "Job Grade",
-        cash = "Cash",
+        characters_header = "Karakter Saya",
+        emptyslot = "Slot Kosong",
+        play_button = "Masuk Kota",
+        create_button = "Buat Karakter",
+        delete_button = "Hapus Karakter",
+        charinfo_header = "Profil Aktif",
+        charinfo_description = "Pilih slot untuk melihat data karakter.",
+        name = "Nama",
+        male = "Laki-laki",
+        female = "Perempuan",
+        firstname = "Nama Depan",
+        lastname = "Nama Belakang",
+        nationality = "Kewarganegaraan",
+        gender = "Jenis Kelamin",
+        birthdate = "Tanggal Lahir",
+        job = "Pekerjaan",
+        jobgrade = "Pangkat",
+        cash = "Uang Tunai",
         bank = "Bank",
-        phonenumber = "Phone Number",
-        accountnumber = "Account Number",
-
-        chardel_header = "Character Registration",
-
-        -- Delete character
-        deletechar_header = "Delete Character",
-        deletechar_description = "Are You Sure You Want To Delete Your Character?",
-
-        -- Buttons
-        cancel = "Cancel",
-        confirm = "Confirm",
-
-        -- Loading Text
-        retrieving_playerdata = "Retrieving player data",
-        validating_playerdata = "Validating player data",
-        retrieving_characters = "Retrieving characters",
-        validating_characters = "Validating characters",
-
-        -- Notifications
-        ran_into_issue = "We ran into an issue",
-        profanity = "It seems like you are trying to use some type of profanity / bad words in your name or nationality!",
-        forgotten_field = "It seems like you have forgotten to input one or multiple of the fields!"
+        phonenumber = "Nomor HP",
+        accountnumber = "Nomor Rekening",
+        chardel_header = "Pendaftaran Karakter",
+        deletechar_header = "Hapus Karakter?",
+        deletechar_description = "Karakter ini akan dihapus secara permanen.",
+        cancel = "Batal",
+        confirm = "Mulai di sini",
+        retrieving_playerdata = "Memuat data...",
+        validating_playerdata = "Memeriksa data...",
+        retrieving_characters = "Memuat karakter...",
+        validating_characters = "Memeriksa karakter...",
+        ran_into_issue = "Terjadi kendala",
+        profanity = "Nama atau data mengandung kata yang tidak diperbolehkan.",
+        forgotten_field = "Pastikan semua data sudah terisi dengan benar."
     }
 }
 

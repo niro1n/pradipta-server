@@ -26,5 +26,7 @@ files {
     'html/index.html',
     'html/style.css',
     'html/vue.js',
-    'html/reset.css'
+    'html/reset.css',
+    'html/app.js',
+    'html/assets/**'
 }

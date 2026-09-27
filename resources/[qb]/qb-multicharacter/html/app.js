@@ -1,10 +1,30 @@
-let re = "(" + profList.join("|") + ")\\b";
-const regTest = new RegExp(re, "i");
+if (typeof axios === "undefined") {
+    window.axios = {
+        post: (url, data) => fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data || {})
+        }).then(r => r.json().catch(() => ({})))
+    };
+}
 
-document.addEventListener("DOMContentLoaded", () => {
+let pendingEvents = [];
+let vueMessageHandler = null;
+
+window.addEventListener("message", (event) => {
+    if (vueMessageHandler) {
+        vueMessageHandler(event);
+    } else {
+        pendingEvents.push(event);
+    }
+});
+
+function initMulticharacter() {
+    if (window.__multicharacter_loaded) return;
+    window.__multicharacter_loaded = true;
+
     const viewmodel = new Vue({
         el: "#app",
-        vuetify: new Vuetify({ theme: { dark: true } }),
         data: {
             characters: [],
             chardata: {},
@@ -15,18 +35,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 delete: false,
             },
             registerData: {
-                date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
-                firstname: undefined,
-                lastname: undefined,
+                date: "2000-01-01",
+                firstname: "",
+                lastname: "",
                 nationality: undefined,
-                gender: undefined,
+                gender: "Male",
             },
             allowDelete: false,
-            dataPickerMenu: false,
             characterAmount: 0,
             loadingText: "",
             selectedCharacter: -1,
-            dollar: Intl.NumberFormat("en-US"),
             translations: {},
             customNationality: false,
             nationalities: [],
@@ -34,18 +52,14 @@ document.addEventListener("DOMContentLoaded", () => {
         methods: {
             click_character: function (idx, type) {
                 this.selectedCharacter = idx;
-
                 if (this.characters[idx] !== undefined) {
                     axios.post("https://qb-multicharacter/cDataPed", {
                         cData: this.characters[idx],
                     });
                 } else {
                     axios.post("https://qb-multicharacter/cDataPed", {});
-                    // For empty slots, immediately show the registration form
                     if (type === "empty") {
                         this.resetRegisterData();
-                        this.show.characters = false;
-                        this.show.register = true;
                     }
                 }
             },
@@ -62,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 this.show.characters = true;
             },
             delete_character: function () {
-                if (this.show.delete) {
+                if (this.show.delete && this.selectedCharacter !== -1 && this.characters[this.selectedCharacter]) {
                     this.show.delete = false;
                     axios.post("https://qb-multicharacter/removeCharacter", {
                         citizenid: this.characters[this.selectedCharacter].citizenid,
@@ -74,8 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             play_character: function () {
                 if (this.selectedCharacter !== -1) {
-                    var data = this.characters[this.selectedCharacter];
-
+                    const data = this.characters[this.selectedCharacter];
                     if (data !== undefined) {
                         axios.post("https://qb-multicharacter/selectCharacter", {
                             cData: data,
@@ -85,8 +98,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         }, 500);
                     } else {
                         this.resetRegisterData();
-                        this.show.characters = false;
-                        this.show.register = true;
                     }
                 }
             },
@@ -94,32 +105,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 this.show.characters = false;
                 this.show.register = true;
                 this.registerData = {
-                    date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
-                    firstname: undefined,
-                    lastname: undefined,
-                    nationality: undefined,
-                    gender: undefined,
+                    date: "2000-01-01",
+                    firstname: "",
+                    lastname: "",
+                    nationality: this.nationalities && this.nationalities.length > 0 ? this.nationalities[0] : undefined,
+                    gender: "Male",
                 };
             },
             create_character: function () {
                 const registerData = this.registerData;
-                const validationResult = characterValidator.validateCharacter({
-                    firstname: registerData.firstname,
-                    lastname: registerData.lastname,
-                    nationality: registerData.nationality,
-                    gender: registerData.gender,
-                    date: registerData.date,
-                });
+                let validationResult = { isValid: true };
+                if (typeof characterValidator !== "undefined" && characterValidator.validateCharacter) {
+                    validationResult = characterValidator.validateCharacter({
+                        firstname: registerData.firstname,
+                        lastname: registerData.lastname,
+                        nationality: registerData.nationality,
+                        gender: registerData.gender,
+                        date: registerData.date,
+                    });
+                }
 
                 if (validationResult.isValid) {
                     this.show.register = false;
+                    const genderLabel = registerData.gender === "Female" ? (this.translate("female") || "Perempuan") : (this.translate("male") || "Laki-laki");
 
                     axios.post("https://qb-multicharacter/createNewCharacter", {
                         firstname: registerData.firstname,
                         lastname: registerData.lastname,
                         nationality: registerData.nationality,
                         birthdate: registerData.date,
-                        gender: registerData.gender,
+                        gender: genderLabel,
                         cid: this.selectedCharacter,
                     });
 
@@ -127,88 +142,100 @@ document.addEventListener("DOMContentLoaded", () => {
                         this.show.characters = false;
                     }, 500);
                 } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: this.translate("ran_into_issue"),
-                        text: this.translate(validationResult.message, { field: this.translate(validationResult.field) }),
-                        timer: 5000,
-                        timerProgressBar: true,
-                        showConfirmButton: false,
-                    });
+                    if (typeof Swal !== "undefined") {
+                        Swal.fire({
+                            icon: "error",
+                            title: this.translate("ran_into_issue") || "Terjadi kendala",
+                            text: this.translate(validationResult.message, { field: this.translate(validationResult.field) }) || "Periksa kembali data yang dimasukkan.",
+                            timer: 5000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                        });
+                    }
                 }
             },
             translate(key, params) {
-                if (params) {
-                    return translationManager.formatTranslation(key, params);
+                if (typeof translationManager !== "undefined") {
+                    if (params) {
+                        return translationManager.formatTranslation(key, params);
+                    }
+                    return translationManager.translate(key);
                 }
-                return translationManager.translate(key);
+                return key;
             },
         },
         mounted() {
-            initializeValidator();
-            var loadingProgress = 0;
-            var loadingDots = 0;
-            window.addEventListener("message", (event) => {
-                var data = event.data;
+            if (typeof initializeValidator === "function") {
+                initializeValidator();
+            }
+
+            vueMessageHandler = (event) => {
+                const data = event.data;
+                if (!data) return;
+
                 switch (data.action) {
                     case "ui":
-                        this.customNationality = event.data.customNationality;
-                        translationManager.setTranslations(event.data.translations);
-                        this.translations = event.data.translations;
-                        this.nationalities = event.data.countries;
-                        this.characterAmount = data.nChar;
+                        if (!data.toggle) {
+                            this.show.characters = false;
+                            this.show.register = false;
+                            this.show.delete = false;
+                            this.show.loading = false;
+                            break;
+                        }
+                        this.customNationality = data.customNationality;
+                        if (typeof translationManager !== "undefined") {
+                            translationManager.setTranslations(data.translations);
+                        }
+                        this.translations = data.translations || {};
+                        this.nationalities = data.countries || [];
+                        this.characterAmount = data.nChar || 1;
                         this.selectedCharacter = -1;
                         this.show.register = false;
                         this.show.delete = false;
-                        this.show.characters = false;
-                        this.allowDelete = event.data.enableDeleteButton;
-                        EnableDeleteButton = data.enableDeleteButton;
+                        this.allowDelete = data.enableDeleteButton;
+                        this.show.loading = true;
+                        this.loadingText = this.translate("retrieving_characters") || "Memuat karakter...";
 
-                        if (data.toggle) {
-                            this.show.loading = true;
-                            this.loadingText = this.translate("retrieving_playerdata");
-                            var DotsInterval = setInterval(() => {
-                                loadingDots++;
-                                loadingProgress++;
-                                if (loadingProgress == 3) {
-                                    this.loadingText = this.translate("validating_playerdata");
-                                }
-                                if (loadingProgress == 4) {
-                                    this.loadingText = this.translate("retrieving_characters");
-                                }
-                                if (loadingProgress == 6) {
-                                    this.loadingText = this.translate("validating_characters");
-                                }
-                                if (loadingDots == 4) {
-                                    loadingDots = 0;
-                                }
-                            }, 500);
-
-                            setTimeout(() => {
-                                axios.post("https://qb-multicharacter/setupCharacters");
-                                setTimeout(() => {
-                                    clearInterval(DotsInterval);
-                                    loadingProgress = 0;
-                                    this.loadingText = this.translate("retrieving_playerdata");
-                                    this.show.loading = false;
-                                    this.show.characters = true;
-                                    axios.post("https://qb-multicharacter/removeBlur");
-                                }, 2000);
-                            }, 2000);
-                        }
+                        axios.post("https://qb-multicharacter/setupCharacters");
                         break;
+
                     case "setupCharacters":
-                        var newChars = [];
-                        for (var i = 0; i < event.data.characters.length; i++) {
-                            newChars[event.data.characters[i].cid] = event.data.characters[i];
+                        const newChars = [];
+                        if (data.characters && data.characters.length) {
+                            for (let i = 0; i < data.characters.length; i++) {
+                                newChars[data.characters[i].cid] = data.characters[i];
+                            }
                         }
                         this.characters = newChars;
+                        this.show.loading = false;
+                        this.show.characters = true;
+                        axios.post("https://qb-multicharacter/removeBlur");
+
+                        let autoSelected = 1;
+                        for (let i = 1; i <= this.characterAmount; i++) {
+                            if (newChars[i]) {
+                                autoSelected = i;
+                                break;
+                            }
+                        }
+                        this.click_character(autoSelected, newChars[autoSelected] ? "existing" : "empty");
                         break;
+
                     case "setupCharInfo":
-                        this.chardata = event.data.chardata;
+                        this.chardata = data.chardata || {};
                         break;
                 }
-            });
+            };
+
+            while (pendingEvents.length > 0) {
+                vueMessageHandler(pendingEvents.shift());
+            }
         },
     });
-});
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initMulticharacter);
+} else {
+    initMulticharacter();
+}

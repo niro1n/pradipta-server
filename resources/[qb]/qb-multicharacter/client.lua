@@ -257,9 +257,9 @@ end)
 RegisterNUICallback('createNewCharacter', function(data, cb)
     local cData = data
     DoScreenFadeOut(150)
-    if cData.gender == Lang:t('ui.male') then
+    if cData.gender == Lang:t('ui.male') or cData.gender == 'Male' or cData.gender == 'Laki-laki' or cData.gender == 0 then
         cData.gender = 0
-    elseif cData.gender == Lang:t('ui.female') then
+    elseif cData.gender == Lang:t('ui.female') or cData.gender == 'Female' or cData.gender == 'Perempuan' or cData.gender == 1 then
         cData.gender = 1
     end
     TriggerServerEvent('qb-multicharacter:server:createCharacter', cData)

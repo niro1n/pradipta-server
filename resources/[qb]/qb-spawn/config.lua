@@ -1,16 +1,16 @@
 QB = {}
 
 QB.Spawns = {
+    citygarage = {
+        coords = vector4(213.2, -796.05, 30.73, 200.0),
+        location = 'citygarage',
+        label = 'Garasi Kota',
+    },
+
     legion = {
         coords = vector4(195.17, -933.77, 29.7, 144.5),
         location = 'legion',
         label = 'Legion Square',
-    },
-
-    policedp = {
-        coords = vector4(428.23, -984.28, 29.76, 3.5),
-        location = 'policedp',
-        label = 'Police Department',
     },
 
     paleto = {

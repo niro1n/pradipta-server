@@ -1,8 +1,12 @@
 local Translations = {
     ui = {
-        last_location = "Last Location",
-        confirm = "Confirm",
-        where_would_you_like_to_start = "Where would you like to start?",
+        last_location = "Lokasi terakhir",
+        confirm = "Mulai di sini",
+        where_would_you_like_to_start = "Pilih lokasi",
+        no_locations = "Tidak ada lokasi",
+        selected = "Dipilih",
+        loading = "Memuat...",
+        choose_location = "Pilih lokasi",
     }
 }
 

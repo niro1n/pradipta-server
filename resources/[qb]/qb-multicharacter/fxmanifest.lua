@@ -33,7 +33,8 @@ files {
     'html/profanity.js',
     'html/translations.js',
     'html/validation.js',
-    'html/app.js'
+    'html/app.js',
+    'html/assets/**'
 }
 
 dependencies {
