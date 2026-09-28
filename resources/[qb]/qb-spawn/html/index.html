@@ -26,22 +26,6 @@
                 </div>
 
                 <div class="locations-list">
-                    <button
-                        v-if="!newChar"
-                        type="button"
-                        class="location-item"
-                        :class="{'is-selected': selectedValue.type === 'current' && selectedValue.name === 'current'}"
-                        @click="click_location('current', 'current', translate('last_location') || 'Lokasi terakhir')"
-                    >
-                        <div class="location-icon">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                        </div>
-                        <div class="location-info">
-                            <div class="location-name">{{ translate('last_location') || 'Lokasi terakhir' }}</div>
-                            <div class="location-sub">Posisi terakhir pemain</div>
-                        </div>
-                        <div class="location-badge" v-if="selectedValue.type === 'current' && selectedValue.name === 'current'">{{ translate('selected') || 'Dipilih' }}</div>
-                    </button>
 
                     <button
                         v-for="(loc, locKey) in positions.normal"

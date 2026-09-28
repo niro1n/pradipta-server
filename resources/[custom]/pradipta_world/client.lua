@@ -19,12 +19,14 @@ CreateThread(function()
 
         for _, ped in ipairs(GetGamePool('CPed')) do
             if DoesEntityExist(ped) and ped ~= playerPed and not IsPedAPlayer(ped) then
-                DeleteEntity(ped)
+                if not IsEntityAMissionEntity(ped) and not (Entity(ped).state and Entity(ped).state.isCharPed) then
+                    DeleteEntity(ped)
+                end
             end
         end
 
         for _, veh in ipairs(GetGamePool('CVehicle')) do
-            if DoesEntityExist(veh) then
+            if DoesEntityExist(veh) and not IsEntityAMissionEntity(veh) then
                 local hasPlayer = false
                 for seat = -1, 7 do
                     local occupant = GetPedInVehicleSeat(veh, seat)

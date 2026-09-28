@@ -1,5 +1,6 @@
 local cam = nil
 local charPed = nil
+local currentCharPedCid = nil
 local isNuiReady = false
 local isUiActive = false
 local isMenuOpen = false
@@ -34,18 +35,32 @@ end
 
 local function initializePedModel(model, data)
     CreateThread(function()
-        if not model then
+        if not model or model == false then
             model = joaat(randommodels[math.random(#randommodels)])
+        elseif type(model) == 'string' and tonumber(model) then
+            model = tonumber(model)
         end
         loadModel(model)
+        if DoesEntityExist(charPed) then
+            SetEntityAsMissionEntity(charPed, true, true)
+            DeleteEntity(charPed)
+        end
         charPed = CreatePed(2, model, Config.PedCoords.x, Config.PedCoords.y, Config.PedCoords.z - 0.98, Config.PedCoords.w, false, true)
+        SetEntityAsMissionEntity(charPed, true, true)
+        if Entity(charPed) and Entity(charPed).state then
+            Entity(charPed).state:set('isCharPed', true, false)
+        end
         SetPedComponentVariation(charPed, 0, 0, 0, 2)
         FreezeEntityPosition(charPed, false)
         SetEntityInvincible(charPed, true)
         PlaceObjectOnGroundProperly(charPed)
         SetBlockingOfNonTemporaryEvents(charPed, true)
         if data then
-            TriggerEvent('qb-clothing:client:loadPlayerClothing', data, charPed)
+            -- illenium-appearance: data from getSkin is already in illenium JSON format
+            local appearance = type(data) == 'string' and json.decode(data) or data
+            if appearance and GetResourceState('illenium-appearance') == 'started' then
+                exports['illenium-appearance']:setPedAppearance(charPed, appearance)
+            end
         end
     end)
 end
@@ -125,7 +140,12 @@ end
 -- Events
 
 RegisterNetEvent('qb-multicharacter:client:closeNUIdefault', function() -- This event is only for no starting apartments
-    DeleteEntity(charPed)
+    currentCharPedCid = nil
+    if DoesEntityExist(charPed) then
+        SetEntityAsMissionEntity(charPed, true, true)
+        DeleteEntity(charPed)
+        charPed = nil
+    end
     SetNuiFocus(false, false)
     DoScreenFadeOut(500)
     Wait(2000)
@@ -139,15 +159,27 @@ RegisterNetEvent('qb-multicharacter:client:closeNUIdefault', function() -- This 
     Wait(500)
     DoScreenFadeIn(250)
     TriggerEvent('qb-weathersync:client:EnableSync')
+    -- illenium-appearance listens to this event in client/framework/qb/main.lua
     TriggerEvent('qb-clothes:client:CreateFirstCharacter')
 end)
 
 RegisterNetEvent('qb-multicharacter:client:closeNUI', function()
-    DeleteEntity(charPed)
+    currentCharPedCid = nil
+    if DoesEntityExist(charPed) then
+        SetEntityAsMissionEntity(charPed, true, true)
+        DeleteEntity(charPed)
+        charPed = nil
+    end
     SetNuiFocus(false, false)
 end)
 
 RegisterNetEvent('qb-multicharacter:client:chooseChar', function()
+    currentCharPedCid = nil
+    if DoesEntityExist(charPed) then
+        SetEntityAsMissionEntity(charPed, true, true)
+        DeleteEntity(charPed)
+        charPed = nil
+    end
     isUiActive = false
     SetNuiFocus(false, false)
     DoScreenFadeOut(10)
@@ -211,13 +243,17 @@ end)
 
 RegisterNUICallback('closeUI', function(data, cb)
     local cData = data and data.cData
+    currentCharPedCid = nil
     DoScreenFadeOut(10)
     if cData then
         TriggerServerEvent('qb-multicharacter:server:loadUserData', cData)
     end
     openCharMenu(false)
-    SetEntityAsMissionEntity(charPed, true, true)
-    DeleteEntity(charPed)
+    if DoesEntityExist(charPed) then
+        SetEntityAsMissionEntity(charPed, true, true)
+        DeleteEntity(charPed)
+        charPed = nil
+    end
     if Config.SkipSelection then
         SetNuiFocus(false, false)
         skyCam(false)
@@ -236,18 +272,33 @@ end)
 
 RegisterNUICallback('selectCharacter', function(data, cb)
     local cData = data.cData
+    currentCharPedCid = nil
     DoScreenFadeOut(10)
     TriggerServerEvent('qb-multicharacter:server:loadUserData', cData)
     openCharMenu(false)
-    SetEntityAsMissionEntity(charPed, true, true)
-    DeleteEntity(charPed)
+    if DoesEntityExist(charPed) then
+        SetEntityAsMissionEntity(charPed, true, true)
+        DeleteEntity(charPed)
+        charPed = nil
+    end
     cb('ok')
 end)
 
 RegisterNUICallback('cDataPed', function(nData, cb)
     local cData = nData.cData
-    SetEntityAsMissionEntity(charPed, true, true)
-    DeleteEntity(charPed)
+    local targetCid = cData and cData.citizenid or 'empty'
+
+    if DoesEntityExist(charPed) and currentCharPedCid == targetCid then
+        cb('ok')
+        return
+    end
+
+    currentCharPedCid = targetCid
+    if DoesEntityExist(charPed) then
+        SetEntityAsMissionEntity(charPed, true, true)
+        DeleteEntity(charPed)
+        charPed = nil
+    end
     if cData ~= nil then
         if not cached_player_skins[cData.citizenid] then
             local temp_model = promise.new()
@@ -267,10 +318,12 @@ RegisterNUICallback('cDataPed', function(nData, cb)
         local model = cached_player_skins[cData.citizenid].model
         local data = cached_player_skins[cData.citizenid].data
 
-        model = model ~= nil and tonumber(model) or false
-
-        if model ~= nil then
-            initializePedModel(model, json.decode(data))
+        if data then
+            local appearance = type(data) == 'string' and json.decode(data) or data
+            local pedModel = (appearance and appearance.model) or model
+            initializePedModel(pedModel, appearance)
+        elseif model then
+            initializePedModel(model)
         else
             initializePedModel()
         end

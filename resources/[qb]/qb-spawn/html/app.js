@@ -78,8 +78,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 return this.translations[phrase] || phrase;
             },
             autoSelectFirst() {
-                if (!this.newChar) {
-                    this.click_location("current", "current", this.translate("last_location") || "Lokasi terakhir");
+                if (this.positions.normal && Object.keys(this.positions.normal).length > 0) {
+                    const firstNormKey = Object.keys(this.positions.normal)[0];
+                    const normObj = this.positions.normal[firstNormKey];
+                    this.click_location("normal", firstNormKey, normObj.label || firstNormKey);
                     return;
                 }
                 if (this.positions.appartment && Object.keys(this.positions.appartment).length > 0) {
@@ -87,11 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     const appObj = this.positions.appartment[firstAppKey];
                     this.click_location("appartment", firstAppKey, appObj.label || firstAppKey);
                     return;
-                }
-                if (this.positions.normal && Object.keys(this.positions.normal).length > 0) {
-                    const firstNormKey = Object.keys(this.positions.normal)[0];
-                    const normObj = this.positions.normal[firstNormKey];
-                    this.click_location("normal", firstNormKey, normObj.label || firstNormKey);
                 }
             },
         },
