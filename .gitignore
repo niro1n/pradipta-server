@@ -3,6 +3,7 @@ cache/
 .replxx_history
 *.log
 *.tmp
+**/node_modules/
 
 # Backup files
 *.bkp

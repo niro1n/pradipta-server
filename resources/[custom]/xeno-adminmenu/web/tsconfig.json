@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "types": ["node"],
+    "moduleResolution": "node",
+    "target": "es2022",
+    "skipLibCheck": true,
+    "composite": true,
+    "module": "ESNext",
+    "allowSyntheticDefaultImports": true,
+    "noEmit": false
+  },
+  "include": ["vite.config.ts"]
+}
