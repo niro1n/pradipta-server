@@ -5,8 +5,8 @@ CreateThread(function()
     if Config.Framework == 'autodetect' then
         if GetResourceState('qbx_core') == 'started' then
             Framework = 'qbox'
-        elseif GetResourceState('qb-core') == 'started' then
-            Framework = 'qbcore'
+        elseif GetResourceState('pradipta-core') == 'started' then
+            Framework = 'pradiptacore'
         elseif GetResourceState('es_extended') == 'started' then
             Framework = 'esx'
         else
@@ -16,14 +16,14 @@ CreateThread(function()
         Framework = Config.Framework
     end
 
-    if Framework == 'qbcore' then
-        Core = exports['qb-core']:GetCoreObject()
+    if Framework == 'pradiptacore' then
+        Core = exports['pradipta-core']:GetCoreObject()
     elseif Framework == 'esx' then
         Core = exports['es_extended']:getSharedObject()
     elseif Framework == 'qbox' then
         Core = exports.qbx_core
     end
-    
+
     DebugLog('^2[Xeno-AdminMenu] Framework initialized: ' .. Framework .. '^0')
 end)
 
@@ -48,7 +48,7 @@ end
 
 function GetTotalEconomy()
     local total = 0
-    if Framework == 'qbcore' or Framework == 'qbox' then
+    if Framework == 'pradiptacore' or Framework == 'qbox' then
         local result = SQLQuery('SELECT money FROM players')
         if result then
             for i=1, #result do
@@ -79,8 +79,8 @@ end
 function GetRichestPlayer()
     local richest = "Unknown"
     local maxMoney = -1
-    
-    if Framework == 'qbcore' or Framework == 'qbox' then
+
+    if Framework == 'pradiptacore' or Framework == 'qbox' then
         local result = SQLQuery('SELECT charinfo, money FROM players')
         if result then
             for i=1, #result do
@@ -138,7 +138,7 @@ function GetPlayerFrameworkData(src)
         thirst = 100
     }
 
-    if Framework == 'qbcore' then
+    if Framework == 'pradiptacore' then
         local Player = Core.Functions.GetPlayer(src)
         if Player then
             data.name = Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname
@@ -180,10 +180,10 @@ end
 
 function GetAllFrameworkVehicles()
     local vehicles = {}
-    if Framework == 'qbcore' or Framework == 'qbox' then
+    if Framework == 'pradiptacore' or Framework == 'qbox' then
         local Shared = Core and Core.Shared
         if not Shared then
-            Shared = exports['qb-core']:GetCoreObject().Shared
+            Shared = exports['pradipta-core']:GetCoreObject().Shared
         end
         if Shared and Shared.Vehicles then
             for k, v in pairs(Shared.Vehicles) do
@@ -207,6 +207,6 @@ function GetAllFrameworkVehicles()
         end
     end
     table.sort(vehicles, function(a, b) return tostring(a.label) < tostring(b.label) end)
-    
+
     return vehicles
 end

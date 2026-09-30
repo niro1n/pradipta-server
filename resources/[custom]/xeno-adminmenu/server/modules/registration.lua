@@ -26,7 +26,7 @@ RegisterCommand('xeno_make_owner', function(source, args, rawCommand)
 
     local playerName = GetPlayerName(targetId) or "Unknown"
 
-    
+
     local ownerGroup = MySQL.query.await('SELECT id FROM xeno_admin_groups WHERE name = ?', {'owner'})
     if not ownerGroup or #ownerGroup == 0 then
         DebugLog('^1Critical Error: Owner group does not exist in the database.^0')
@@ -37,13 +37,13 @@ RegisterCommand('xeno_make_owner', function(source, args, rawCommand)
     MySQL.insert.await([[
         INSERT INTO xeno_admin_staff (name, identifier, group_id, status, is_active, added_by, approved_at, approved_by)
         VALUES (?, ?, ?, 'approved', 1, 'Console', CURRENT_TIMESTAMP, 'Console')
-        ON DUPLICATE KEY UPDATE 
+        ON DUPLICATE KEY UPDATE
         group_id = ?, status = 'approved', is_active = 1, approved_at = CURRENT_TIMESTAMP, approved_by = 'Console'
     ]], {playerName, identifier, groupId, groupId})
 
     isOwnerCommandLocked = true
     DebugLog('^2[Xeno-AdminMenu] Successfully made ' .. playerName .. ' (' .. identifier .. ') an owner!^0')
-    
+
     exports['xeno-adminmenu']:RefreshPermissionCache()
     TriggerEvent('xeno_admin:permissionsUpdated')
 end, true)
@@ -77,9 +77,9 @@ RegisterNetEvent('xeno-adminmenu:server:CheckRegistrationStatus', function()
         return
     end
 
-    TriggerClientEvent('xeno-adminmenu:client:RegistrationStatus', src, { 
-        status = staff.status, 
-        reason = staff.reject_reason 
+    TriggerClientEvent('xeno-adminmenu:client:RegistrationStatus', src, {
+        status = staff.status,
+        reason = staff.reject_reason
     })
 end)
 
@@ -99,22 +99,22 @@ RegisterNetEvent('xeno-adminmenu:server:SubmitRegistration', function(reason)
 
     local playerName = GetPlayerName(src)
 
-    
+
     local existing = MySQL.query.await('SELECT status, rejected_at FROM xeno_admin_staff WHERE identifier = ?', {identifier})
-    
+
     if existing and #existing > 0 then
         local status = existing[1].status
         if status == 'pending' or status == 'approved' or status == 'disabled' then
-            
+
             return
         elseif status == 'rejected' then
-            
+
             if existing[1].rejected_at then
-                
-                
-                
+
+
+
             end
-            
+
             MySQL.update.await('UPDATE xeno_admin_staff SET status = ?, apply_reason = ?, reject_reason = NULL, name = ? WHERE identifier = ?', {'pending', reason, playerName, identifier})
             if AddLog then AddLog('staff', 'Re-submitted registration application', playerName, nil, { reason = reason }, 'staff_added') end
         end
@@ -123,10 +123,10 @@ RegisterNetEvent('xeno-adminmenu:server:SubmitRegistration', function(reason)
         if AddLog then AddLog('staff', 'Submitted registration application', playerName, nil, { reason = reason }, 'staff_added') end
     end
 
-    
+
     TriggerClientEvent('xeno-adminmenu:client:RegistrationStatus', src, { status = 'pending' })
-    
-    
+
+
     for _, playerId in ipairs(GetPlayers()) do
         if exports['xeno-adminmenu']:IsAdmin(playerId) then
             TriggerClientEvent('xeno-adminmenu:client:Notify', playerId, 'New admin registration application from ' .. playerName, 'info')
@@ -148,17 +148,17 @@ end)
 RegisterNetEvent('xeno-adminmenu:server:ApproveRegistration', function(identifier)
     local src = source
     if not exports['xeno-adminmenu']:IsAdmin(src) then return end
-    
+
     local adminName = GetPlayerName(src)
 
-    MySQL.update('UPDATE xeno_admin_staff SET status = ?, approved_at = CURRENT_TIMESTAMP, approved_by = ? WHERE identifier = ?', 
+    MySQL.update('UPDATE xeno_admin_staff SET status = ?, approved_at = CURRENT_TIMESTAMP, approved_by = ? WHERE identifier = ?',
     {'approved', adminName, identifier}, function(affectedRows)
         if affectedRows > 0 then
             exports['xeno-adminmenu']:RefreshPermissionCache()
             TriggerEvent('xeno_admin:permissionsUpdated')
             if AddLog then AddLog('staff', 'Approved registration for ' .. identifier, adminName, nil, { targetIdentifier = identifier }, 'staff_added') end
-            
-            
+
+
             MySQL.query('SELECT id, name, identifier, status, apply_reason, created_at, updated_at FROM xeno_admin_staff WHERE status = ?', {'pending'}, function(results)
                 TriggerClientEvent('xeno-adminmenu:client:ReceivePendingRegistrations', src, results)
             end)
@@ -170,7 +170,7 @@ end)
 RegisterNetEvent('xeno-adminmenu:server:RejectRegistration', function(identifier, reason)
     local src = source
     if not exports['xeno-adminmenu']:IsAdmin(src) then return end
-    
+
     if type(reason) ~= 'string' then reason = "No reason provided." end
     if string.len(reason) > (Config.Registration.MaxRejectReasonLength or 500) then
         reason = string.sub(reason, 1, (Config.Registration.MaxRejectReasonLength or 500))
@@ -178,12 +178,12 @@ RegisterNetEvent('xeno-adminmenu:server:RejectRegistration', function(identifier
 
     local adminName = GetPlayerName(src)
 
-    MySQL.update('UPDATE xeno_admin_staff SET status = ?, reject_reason = ?, rejected_at = CURRENT_TIMESTAMP, rejected_by = ? WHERE identifier = ?', 
+    MySQL.update('UPDATE xeno_admin_staff SET status = ?, reject_reason = ?, rejected_at = CURRENT_TIMESTAMP, rejected_by = ? WHERE identifier = ?',
     {'rejected', reason, adminName, identifier}, function(affectedRows)
         if affectedRows > 0 then
             if AddLog then AddLog('staff', 'Rejected registration for ' .. identifier, adminName, nil, { targetIdentifier = identifier, reason = reason }, 'staff_deleted') end
-            
-            
+
+
             MySQL.query('SELECT id, name, identifier, status, apply_reason, created_at, updated_at FROM xeno_admin_staff WHERE status = ?', {'pending'}, function(results)
                 TriggerClientEvent('xeno-adminmenu:client:ReceivePendingRegistrations', src, results)
             end)

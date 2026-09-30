@@ -1,4 +1,4 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local PradiptaCore = exports['pradipta-core']:GetCoreObject()
 
 RegisterNetEvent('xeno-adminmenu:server:TryOpenQuickMenu', function()
     local src = source
@@ -14,7 +14,7 @@ end)
 RegisterNetEvent('xeno-adminmenu:server:RequestGroups', function(targetSrc)
     local src = targetSrc or source
     if not exports['xeno-adminmenu']:IsAdmin(src) then return end
-    
+
     MySQL.query('SELECT * FROM xeno_admin_groups', {}, function(result)
         if result then
             for i=1, #result do
@@ -52,11 +52,11 @@ end
 RegisterNetEvent('xeno-adminmenu:server:SaveGroup', function(groupData)
     local src = source
     DebugLog('SaveGroup Triggered by: ' .. tostring(src))
-    if not exports['xeno-adminmenu']:IsAdmin(src) then 
+    if not exports['xeno-adminmenu']:IsAdmin(src) then
         DebugLog('SaveGroup Failed: User is not admin')
-        return 
+        return
     end
-    
+
     if groupData.name == 'owner' then
         DebugLog('SaveGroup Failed: Cannot edit owner group')
         return
@@ -64,7 +64,7 @@ RegisterNetEvent('xeno-adminmenu:server:SaveGroup', function(groupData)
 
     local permissionsJson = json.encode(groupData.permissions or {})
     DebugLog('SaveGroup Data:', groupData.name, groupData.id, permissionsJson)
-    
+
     if groupData.id and type(groupData.id) == "number" then
         DebugLog('SaveGroup: Updating existing group')
         MySQL.update('UPDATE xeno_admin_groups SET name = ?, color = ?, permissions = ?, description = ? WHERE id = ?', {groupData.name, groupData.color, permissionsJson, groupData.description, groupData.id}, function(affectedRows)
@@ -90,12 +90,12 @@ end)
 RegisterNetEvent('xeno-adminmenu:server:DeleteGroup', function(groupId)
     local src = source
     if not exports['xeno-adminmenu']:IsAdmin(src) then return end
-    
+
     local group = exports['xeno-adminmenu']:GetGroup(groupId)
     if group and group.name == 'owner' then
         return
     end
-    
+
     MySQL.update('DELETE FROM xeno_admin_groups WHERE id = ?', {groupId}, function(affectedRows)
         CreateThread(function()
             exports['xeno-adminmenu']:RefreshPermissionCache()
@@ -110,7 +110,7 @@ end)
 RegisterNetEvent('xeno-adminmenu:server:RequestStaff', function(targetSrc)
     local src = targetSrc or source
     if not exports['xeno-adminmenu']:IsAdmin(src) then return end
-    
+
     MySQL.query('SELECT s.*, g.name as group_name FROM xeno_admin_staff s LEFT JOIN xeno_admin_groups g ON s.group_id = g.id WHERE s.status != ?', {'disabled'}, function(result)
         if result then
             for i=1, #result do
@@ -156,11 +156,11 @@ end
 RegisterNetEvent('xeno-adminmenu:server:SaveStaff', function(staffData)
     local src = source
     if not exports['xeno-adminmenu']:IsAdmin(src) then return end
-    
+
     local permissionsJson = json.encode(staffData.permissions or {})
     local adminName = GetPlayerName(src)
-    
-    
+
+
     local targetGroup = exports['xeno-adminmenu']:GetGroup(staffData.group_id)
     if targetGroup and targetGroup.name == 'owner' then
         DebugLog('^1[Xeno-AdminMenu] Cannot manually assign users to the owner group via UI.^0')
@@ -190,8 +190,8 @@ end)
 RegisterNetEvent('xeno-adminmenu:server:DeleteStaff', function(staffId)
     local src = source
     if not exports['xeno-adminmenu']:IsAdmin(src) then return end
-    
-    
+
+
     local staffResult = MySQL.query.await('SELECT group_id FROM xeno_admin_staff WHERE id = ?', {staffId})
     if staffResult and #staffResult > 0 then
         local gId = staffResult[1].group_id
@@ -200,7 +200,7 @@ RegisterNetEvent('xeno-adminmenu:server:DeleteStaff', function(staffId)
             return
         end
     end
-    
+
     MySQL.update('DELETE FROM xeno_admin_staff WHERE id = ?', {staffId}, function(affectedRows)
         CreateThread(function()
             exports['xeno-adminmenu']:RefreshPermissionCache()

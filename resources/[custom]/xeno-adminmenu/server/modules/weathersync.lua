@@ -151,16 +151,16 @@ local function ProcessUpdateQueue()
             SaveState()
             LogDebug("State updated by " .. (sourceLabel or "System") .. ": " .. json.encode(internalState))
 
-            if weatherChanged then 
+            if weatherChanged then
                 TriggerEvent('xeno-adminmenu:server:weatherChanged', internalState.weather)
                 if AddLog then AddLog('weather', 'Weather changed to ' .. internalState.weather, sourceLabel or 'System', nil, { weather = internalState.weather }) end
             end
-            if timeChanged then 
-                TriggerEvent('xeno-adminmenu:server:timeChanged', internalState.hour, internalState.minute) 
+            if timeChanged then
+                TriggerEvent('xeno-adminmenu:server:timeChanged', internalState.hour, internalState.minute)
                 if AddLog then AddLog('weather', 'Time changed to ' .. internalState.hour .. ':' .. string.format("%02d", internalState.minute), sourceLabel or 'System', nil, { hour = internalState.hour, minute = internalState.minute }) end
             end
-            if blackoutChanged then 
-                TriggerEvent('xeno-adminmenu:server:blackoutChanged', internalState.blackout) 
+            if blackoutChanged then
+                TriggerEvent('xeno-adminmenu:server:blackoutChanged', internalState.blackout)
                 if AddLog then AddLog('weather', 'Blackout changed to ' .. tostring(internalState.blackout), sourceLabel or 'System', nil, { blackout = internalState.blackout }) end
             end
         end
@@ -188,14 +188,14 @@ end)
 
 AddEventHandler('onResourceStart', function(resourceName)
     if resourceName == GetCurrentResourceName() then
-        local conflicts = { "qb-weathersync", "cd_easytime", "vSync" }
+        local conflicts = { "pradipta-weathersync", "cd_easytime", "vSync" }
         for _, v in ipairs(conflicts) do
             if GetResourceState(v) == "started" then
                 DebugLog("^1[WARNING] [xeno-adminmenu] Conflicting resource detected: " .. v .. "^7")
                 DebugLog("^1[WARNING] Please stop/disable " .. v .. " to avoid weather/time flickering.^7")
             end
         end
-        
+
         BroadcastState()
         DebugLog("^2[xeno-adminmenu] [WeatherSync] System started. Weather: " .. internalState.weather .. " Time: " .. internalState.hour .. ":" .. internalState.minute .. "^0")
     end
@@ -222,7 +222,7 @@ CreateThread(function()
                     internalState.hour = 0
                 end
             end
-            
+
             GlobalState.xenoWeather = BuildPublicState()
         end
     end
@@ -263,7 +263,7 @@ local function isRateLimited(src)
     if not lastAction[src] then
         lastAction[src] = 0
     end
-    if now - lastAction[src] < 500 then 
+    if now - lastAction[src] < 500 then
         return true
     end
     lastAction[src] = now

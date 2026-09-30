@@ -4,17 +4,17 @@
 
 
 local COLORS = {
-    info    = 3447003,   
-    success = 3066993,   
-    warning = 15105570,  
-    error   = 15158332,  
-    admin   = 10181046,  
-    player  = 3447003,   
-    system  = 8421504,   
-    kick    = 15158332,  
-    weather = 1752220,   
-    report  = 15844367,  
-    item    = 3066993,   
+    info    = 3447003,
+    success = 3066993,
+    warning = 15105570,
+    error   = 15158332,
+    admin   = 10181046,
+    player  = 3447003,
+    system  = 8421504,
+    kick    = 15158332,
+    weather = 1752220,
+    report  = 15844367,
+    item    = 3066993,
 }
 
 
@@ -88,7 +88,7 @@ function AddLog(logType, message, adminName, targetName, details, discordEventOv
         { logType, message, adminName or "", targetName or "", detailsJson }
     )
 
-    
+
     local eventMap = {
         admin   = 'admin_action',
         player  = 'player_join',

@@ -13,6 +13,7 @@ server.cfg.bkp
 
 # Secrets & Credentials
 credentials.cfg
+db/
 
 # OS & Editor
 .DS_Store

@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-author 'niro1n'
+author 'NIRO1N'
 description 'Pradipta Administrative Console'
 
 version '4.0.0'

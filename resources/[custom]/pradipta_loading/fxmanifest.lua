@@ -2,7 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 
 name 'pradipta_loading'
-author 'PRADIPTA'
+author 'NIRO1N'
 description 'PRADIPTA - Private Family Server Loading Screen'
 version '1.0.0'
 

@@ -77,25 +77,25 @@ function GetPlayerAdminRole(src)
     if not src then return nil end
 
     -- 1. FiveM ACE Permissions (Highest Priority)
-    if IsPlayerAceAllowed(src, 'command') or IsPlayerAceAllowed(src, 'qbcore.god') then
+    if IsPlayerAceAllowed(src, 'command') or IsPlayerAceAllowed(src, 'pradiptacore.god') then
         return 'god'
-    elseif IsPlayerAceAllowed(src, 'qbcore.admin') then
+    elseif IsPlayerAceAllowed(src, 'pradiptacore.admin') then
         return 'admin'
-    elseif IsPlayerAceAllowed(src, 'qbcore.mod') then
+    elseif IsPlayerAceAllowed(src, 'pradiptacore.mod') then
         return 'mod'
     end
 
-    -- 2. QBCore Framework Permissions
-    local QBCore = Core
-    if not QBCore then
-        pcall(function() QBCore = exports['qb-core']:GetCoreObject() end)
+    -- 2. PradiptaCore Framework Permissions
+    local PradiptaCore = Core
+    if not PradiptaCore then
+        pcall(function() PradiptaCore = exports['pradipta-core']:GetCoreObject() end)
     end
-    if QBCore and QBCore.Functions and QBCore.Functions.HasPermission then
-        if QBCore.Functions.HasPermission(src, 'god') then
+    if PradiptaCore and PradiptaCore.Functions and PradiptaCore.Functions.HasPermission then
+        if PradiptaCore.Functions.HasPermission(src, 'god') then
             return 'god'
-        elseif QBCore.Functions.HasPermission(src, 'admin') then
+        elseif PradiptaCore.Functions.HasPermission(src, 'admin') then
             return 'admin'
-        elseif QBCore.Functions.HasPermission(src, 'mod') then
+        elseif PradiptaCore.Functions.HasPermission(src, 'mod') then
             return 'mod'
         end
     end

@@ -14,7 +14,7 @@ local function GetIdentifiersDict(src)
         elseif string.find(id, "live:") then ids.live = id
         elseif string.find(id, "ip:") then ids.ip = id end
     end
-    
+
     if not ids.ip then
         local ip = GetPlayerEndpoint(src)
         if ip then ids.ip = "ip:" .. string.gsub(ip, ":%d+", "") end
@@ -35,12 +35,12 @@ end
 local function FormatBanMessage(banData)
     local serverName = Config.Bans.ServerName or "Our Server"
     local appealUrl = Config.Bans.AppealURL or "Our Discord"
-    
+
     local expireStr = "Permanent"
     if not banData.is_permanent then
         expireStr = os.date('%d %B %Y at %H:%M:%S', math.floor(banData.expire / 1000))
     end
-    
+
     local msg = "\n"
     msg = msg .. "🛑 You are banned from " .. serverName .. " 🛑\n\n"
     msg = msg .. "📋 Ban ID: " .. banData.ban_id .. "\n"
@@ -49,7 +49,7 @@ local function FormatBanMessage(banData)
     msg = msg .. "📝 Reason:\n" .. (banData.reason or "No reason specified.") .. "\n\n"
     msg = msg .. "If you believe this was a mistake, you can appeal your ban here:\n"
     msg = msg .. appealUrl .. "\n"
-    
+
     return msg
 end
 
@@ -58,18 +58,18 @@ local function RefreshBansCache()
     exports.oxmysql:execute('SELECT * FROM xeno_admin_bans WHERE active = 1', {}, function(results)
         ActiveBansCache = {}
         for _, ban in ipairs(results) do
-            
+
             local identifiers = {ban.license, ban.license2, ban.steam, ban.discord, ban.fivem, ban.xbl, ban.live, ban.ip}
-            
-            
+
+
             if not ban.is_permanent and ban.expire then
-                
+
                 if os.time() * 1000 > ban.expire then
                     exports.oxmysql:execute('UPDATE xeno_admin_bans SET active = 0, expired_at = CURRENT_TIMESTAMP WHERE id = ?', {ban.id})
                     goto continue
                 end
             end
-            
+
             for _, id in ipairs(identifiers) do
                 if id and id ~= "" then
                     ActiveBansCache[id] = ban
@@ -82,7 +82,7 @@ end
 
 
 CreateThread(function()
-    Wait(2000) 
+    Wait(2000)
     RefreshBansCache()
 end)
 
@@ -92,11 +92,11 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
     deferrals.defer()
     Wait(0)
     deferrals.update(string.format("Hello %s. Checking your ban status...", name))
-    
+
     local identifiers = GetIdentifiersDict(src)
     local isBanned = false
     local banData = nil
-    
+
     for _, id in pairs(identifiers) do
         if ActiveBansCache[id] then
             isBanned = true
@@ -104,16 +104,16 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
             break
         end
     end
-    
+
     if isBanned then
-        
-        
+
+
         exports.oxmysql:execute('SELECT active, expire, is_permanent FROM xeno_admin_bans WHERE id = ?', {banData.id}, function(result)
             local dbBan = result[1]
             if dbBan and (dbBan.active == 1 or dbBan.active == true) then
-                
+
                 if not dbBan.is_permanent and dbBan.expire and (os.time() * 1000 > dbBan.expire) then
-                    
+
                     exports.oxmysql:execute('UPDATE xeno_admin_bans SET active = 0, expired_at = CURRENT_TIMESTAMP WHERE id = ?', {banData.id})
                     RefreshBansCache()
                     deferrals.done()
@@ -121,7 +121,7 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
                     deferrals.done(FormatBanMessage(banData))
                 end
             else
-                
+
                 RefreshBansCache()
                 deferrals.done()
             end
@@ -133,7 +133,7 @@ end)
 
 
 local function FetchOfflineIdentifiers(searchQuery, cb)
-    if Framework == 'qbcore' or Config.Framework == 'qbcore' or Framework == 'qbox' then
+    if Framework == 'pradiptacore' or Config.Framework == 'pradiptacore' or Framework == 'qbox' then
         exports.oxmysql:execute('SELECT license FROM players WHERE citizenid = ? OR license = ?', {searchQuery, searchQuery}, function(result)
             if result[1] then cb({license = result[1].license}) else cb(nil) end
         end)
@@ -142,7 +142,7 @@ local function FetchOfflineIdentifiers(searchQuery, cb)
             if result[1] then cb({license = result[1].identifier}) else cb(nil) end
         end)
     else
-        
+
         cb(nil)
     end
 end
@@ -161,24 +161,24 @@ local function InsertBan(targetName, identifiers, reason, adminName, adminIdenti
     local isPerm = (durationHours == 0)
     local expire = nil
     if not isPerm then
-        expire = (os.time() + (durationHours * 3600)) * 1000 
+        expire = (os.time() + (durationHours * 3600)) * 1000
     end
-    
+
     exports.oxmysql:insert([[
-        INSERT INTO xeno_admin_bans 
+        INSERT INTO xeno_admin_bans
         (ban_id, player_name, license, license2, steam, discord, fivem, xbl, live, ip, reason, banned_by_name, banned_by_identifier, is_permanent, expire)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, FROM_UNIXTIME(?))
     ]], {
-        banId, targetName, 
-        identifiers.license, identifiers.license2, identifiers.steam, identifiers.discord, 
+        banId, targetName,
+        identifiers.license, identifiers.license2, identifiers.steam, identifiers.discord,
         identifiers.fivem, identifiers.xbl, identifiers.live, identifiers.ip,
         reason, adminName, adminIdentifier, isPerm, (isPerm and 0 or (os.time() + durationHours * 3600))
     }, function(id)
-        -- Synchronize with QBCore bans table for unified enforcement
+        -- Synchronize with PradiptaCore bans table for unified enforcement
         pcall(function()
-            local qbExpire = isPerm and 2147483647 or (os.time() + durationHours * 3600)
+            local pradiptaExpire = isPerm and 2147483647 or (os.time() + durationHours * 3600)
             MySQL.insert('INSERT INTO bans (name, license, discord, ip, reason, expire, bannedby) VALUES (?, ?, ?, ?, ?, ?, ?)', {
-                targetName, identifiers.license or '', identifiers.discord or '', identifiers.ip or '', reason, qbExpire, adminName
+                targetName, identifiers.license or '', identifiers.discord or '', identifiers.ip or '', reason, pradiptaExpire, adminName
             })
         end)
 
@@ -195,7 +195,7 @@ exports('BanPlayer', function(targetId, durationHours, reason, adminName)
     local adminIdentifier = "System"
     local identifiers = GetIdentifiersDict(targetId)
     local targetName = GetPlayerName(targetId)
-    
+
     local banId = InsertBan(targetName, identifiers, reason, adminName, adminIdentifier, durationHours)
     DropPlayer(targetId, "You have been banned from PRADIPTA PRIVATE.\nBan ID: " .. banId .. "\nReason: " .. reason)
     return banId
@@ -225,14 +225,14 @@ end)
 RegisterNetEvent('xeno-adminmenu:server:FetchBans', function(page, limit, search, filter)
     local src = source
     if not IsPlayerAdmin(src) then return end
-    
+
     page = page or 1
     limit = limit or 10
     local offset = (page - 1) * limit
-    
+
     local query = 'SELECT * FROM xeno_admin_bans WHERE 1=1'
     local params = {}
-    
+
     if search and search ~= "" then
         query = query .. ' AND (player_name LIKE ? OR ban_id LIKE ? OR reason LIKE ? OR license LIKE ? OR discord LIKE ?)'
         local searchParam = '%' .. search .. '%'
@@ -242,7 +242,7 @@ RegisterNetEvent('xeno-adminmenu:server:FetchBans', function(page, limit, search
         table.insert(params, searchParam)
         table.insert(params, searchParam)
     end
-    
+
     if filter == 'Active' then
         query = query .. ' AND active = 1'
     elseif filter == 'Expired' then
@@ -250,13 +250,13 @@ RegisterNetEvent('xeno-adminmenu:server:FetchBans', function(page, limit, search
     elseif filter == 'Permanent' then
         query = query .. ' AND is_permanent = 1'
     end
-    
+
     query = query .. ' ORDER BY created_at DESC LIMIT ? OFFSET ?'
     table.insert(params, limit)
     table.insert(params, offset)
-    
+
     exports.oxmysql:execute(query, params, function(results)
-        
+
         local countQuery = 'SELECT COUNT(*) as total FROM xeno_admin_bans WHERE 1=1'
         local countParams = {}
         if search and search ~= "" then
@@ -270,7 +270,7 @@ RegisterNetEvent('xeno-adminmenu:server:FetchBans', function(page, limit, search
         if filter == 'Active' then countQuery = countQuery .. ' AND active = 1'
         elseif filter == 'Expired' then countQuery = countQuery .. ' AND active = 0'
         elseif filter == 'Permanent' then countQuery = countQuery .. ' AND is_permanent = 1' end
-        
+
         exports.oxmysql:scalar(countQuery, countParams, function(total)
             TriggerClientEvent('xeno-adminmenu:client:ReceiveBans', src, results, total or 0)
         end)
@@ -280,33 +280,33 @@ end)
 RegisterNetEvent('xeno-adminmenu:server:BanPlayer', function(targetId, isOffline, reason, durationHours)
     local src = source
     if not IsPlayerAdmin(src) then return end
-    
+
     local adminName = GetPlayerName(src)
     local adminIdentifier = GetIdentifiersDict(src).license or "Unknown"
-    
+
     if not isOffline then
         local target = tonumber(targetId)
         if not target then return end
         local identifiers = GetIdentifiersDict(target)
         local targetName = GetPlayerName(target)
-        
-        
+
+
         for _, id in pairs(identifiers) do
             if ActiveBansCache[id] then
                 TriggerClientEvent('chat:addMessage', src, {args = {"^1[Admin]", "Player is already banned!"}})
                 return
             end
         end
-        
+
         local banId = InsertBan(targetName, identifiers, reason, adminName, adminIdentifier, durationHours)
         DropPlayer(target, "You have been banned. Ban ID: " .. banId .. "\nReason: " .. reason)
         TriggerClientEvent('chat:addMessage', src, {args = {"^2[Admin]", "Banned player successfully."}})
     else
-        
+
         FetchOfflineIdentifiers(targetId, function(identifiers)
             if identifiers then
                 local targetName = "Offline Player"
-                
+
                 for _, id in pairs(identifiers) do
                     if ActiveBansCache[id] then
                         TriggerClientEvent('chat:addMessage', src, {args = {"^1[Admin]", "Offline Player is already banned!"}})
@@ -333,10 +333,10 @@ end)
 RegisterNetEvent('xeno-adminmenu:server:EditBan', function(banId, newData)
     local src = source
     if not IsPlayerAdmin(src) then return end
-    
+
     local query = 'UPDATE xeno_admin_bans SET '
     local params = {}
-    
+
     if newData.reason then
         query = query .. 'reason = ?, '
         table.insert(params, newData.reason)
@@ -356,11 +356,11 @@ RegisterNetEvent('xeno-adminmenu:server:EditBan', function(banId, newData)
         query = query .. 'notes = ?, '
         table.insert(params, newData.notes)
     end
-    
+
     query = string.sub(query, 1, -3) .. ' WHERE ban_id = ? OR id = ?'
     table.insert(params, banId)
     table.insert(params, tonumber(banId))
-    
+
     exports.oxmysql:execute(query, params, function(affected)
         RefreshBansCache()
     end)

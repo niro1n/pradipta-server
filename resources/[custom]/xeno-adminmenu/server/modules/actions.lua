@@ -1,4 +1,4 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local PradiptaCore = exports['pradipta-core']:GetCoreObject()
 
 
 function BroadcastTerminalLog(logType, message)
@@ -13,11 +13,11 @@ end
 
 RegisterConsoleListener(function(channel, level, message)
     if not message then return end
-    
+
     local logType = 'info'
     local messageStr = tostring(message)
     local lowerMsg = string.lower(messageStr)
-    
+
     if string.find(lowerMsg, 'error') or string.find(lowerMsg, 'failed') or string.find(lowerMsg, 'exception') or string.find(lowerMsg, 'traceback') then
         logType = 'error'
     elseif string.find(lowerMsg, 'warn') or string.find(lowerMsg, 'deprecated') then
@@ -26,9 +26,9 @@ RegisterConsoleListener(function(channel, level, message)
         logType = 'admin'
     end
     BroadcastTerminalLog(logType, messageStr)
-    
+
     if logType == 'error' and AddLog then
-        
+
         AddLog('system', 'Server Error: ' .. string.sub(messageStr, 1, 255), 'Server Console', nil, { full_error = messageStr }, 'system_alert')
     end
 end)
@@ -38,16 +38,16 @@ RegisterNetEvent('xeno-adminmenu:server:Action', function(action, targetId)
     if not HasPermission(src, action) and not IsAdmin(src) then return end
     targetId = tonumber(targetId)
     if not targetId then return end
-    
+
     if action == 'spectate' then
         TriggerClientEvent('xeno-adminmenu:client:Spectate', src, targetId)
     elseif action == 'heal' or action == 'freeze' or action == 'kill' or action == 'slap' or action == 'toggleDrunk' or action == 'fixVehicle' then
         TriggerClientEvent('xeno-adminmenu:client:ExecuteAction', targetId, action)
         if action == 'heal' then
-            if Framework == 'qbcore' or Framework == 'qbox' or Config.Framework == 'qbcore' then
+            if Framework == 'pradiptacore' or Framework == 'qbox' or Config.Framework == 'pradiptacore' then
                 local Player = Core and Core.Functions and Core.Functions.GetPlayer(targetId)
                 if not Player then
-                    pcall(function() Player = exports['qb-core']:GetCoreObject().Functions.GetPlayer(targetId) end)
+                    pcall(function() Player = exports['pradipta-core']:GetCoreObject().Functions.GetPlayer(targetId) end)
                 end
                 if Player then
                     Player.Functions.SetMetaData("hunger", 100)
@@ -55,7 +55,7 @@ RegisterNetEvent('xeno-adminmenu:server:Action', function(action, targetId)
                     Player.Functions.SetMetaData("isdead", false)
                     Player.Functions.SetMetaData("inlaststand", false)
                 end
-                if GetResourceState('qb-ambulancejob') == 'started' then
+                if GetResourceState('pradipta-ambulancejob') == 'started' then
                     TriggerClientEvent('hospital:client:Revive', targetId)
                 end
             elseif Framework == 'esx' then
@@ -79,7 +79,7 @@ RegisterNetEvent('xeno-adminmenu:server:Action', function(action, targetId)
         local targetCoords = GetEntityCoords(targetPed)
         TriggerClientEvent('xeno-adminmenu:client:SetWaypoint', src, targetCoords)
     end
-    
+
     if AddLog then
         AddLog('admin', 'Used action: ' .. action, GetPlayerName(src), GetPlayerName(targetId), { action = action, targetId = targetId }, 'admin_action')
     end
@@ -96,11 +96,11 @@ RegisterNetEvent('xeno-adminmenu:server:ClearInventory', function(targetId)
     if not HasPermission(src, 'clearInventory') and not IsAdmin(src) then return end
     targetId = tonumber(targetId)
     if not targetId then return end
-    
-    if Framework == 'qbcore' or Framework == 'qbox' or Config.Framework == 'qbcore' then
+
+    if Framework == 'pradiptacore' or Framework == 'qbox' or Config.Framework == 'pradiptacore' then
         local Player = Core and Core.Functions and Core.Functions.GetPlayer(targetId)
         if not Player then
-            pcall(function() Player = exports['qb-core']:GetCoreObject().Functions.GetPlayer(targetId) end)
+            pcall(function() Player = exports['pradipta-core']:GetCoreObject().Functions.GetPlayer(targetId) end)
         end
         if Player then Player.Functions.ClearInventory() end
     elseif Framework == 'esx' then
@@ -122,11 +122,11 @@ RegisterNetEvent('xeno-adminmenu:server:GiveMoney', function(targetId, account, 
     targetId = tonumber(targetId)
     amount = tonumber(amount)
     if not targetId or not amount or not account then return end
-    
-    if Framework == 'qbcore' or Framework == 'qbox' or Config.Framework == 'qbcore' then
+
+    if Framework == 'pradiptacore' or Framework == 'qbox' or Config.Framework == 'pradiptacore' then
         local Player = Core and Core.Functions and Core.Functions.GetPlayer(targetId)
         if not Player then
-            pcall(function() Player = exports['qb-core']:GetCoreObject().Functions.GetPlayer(targetId) end)
+            pcall(function() Player = exports['pradipta-core']:GetCoreObject().Functions.GetPlayer(targetId) end)
         end
         if Player then
             if amount > 0 then Player.Functions.AddMoney(account, amount, 'admin-menu')
@@ -148,7 +148,7 @@ RegisterNetEvent('xeno-adminmenu:server:ActionWithInput', function(action, targe
     targetId = tonumber(targetId)
     if not targetId then return end
     local role = GetPlayerAdminRole(src)
-    
+
     if action == 'kick' then
         if not HasPermission(src, 'kick') then return end
         DropPlayer(targetId, input or "Kicked by Admin")
@@ -165,7 +165,7 @@ RegisterNetEvent('xeno-adminmenu:server:ActionWithInput', function(action, targe
         if role ~= 'god' and role ~= 'admin' then return end
         local Player = Core and Core.Functions and Core.Functions.GetPlayer(targetId)
         if not Player then
-            pcall(function() Player = exports['qb-core']:GetCoreObject().Functions.GetPlayer(targetId) end)
+            pcall(function() Player = exports['pradipta-core']:GetCoreObject().Functions.GetPlayer(targetId) end)
         end
         if Player then Player.Functions.SetJob(input, 0) end
     elseif action == 'giveMoneySelf' then
@@ -174,7 +174,7 @@ RegisterNetEvent('xeno-adminmenu:server:ActionWithInput', function(action, targe
         if amount then
             local Player = Core and Core.Functions and Core.Functions.GetPlayer(targetId)
             if not Player then
-                pcall(function() Player = exports['qb-core']:GetCoreObject().Functions.GetPlayer(targetId) end)
+                pcall(function() Player = exports['pradipta-core']:GetCoreObject().Functions.GetPlayer(targetId) end)
             end
             if Player then Player.Functions.AddMoney('bank', amount, 'admin-menu') end
         end
@@ -184,7 +184,7 @@ RegisterNetEvent('xeno-adminmenu:server:ActionWithInput', function(action, targe
         if amount then
             local Player = Core and Core.Functions and Core.Functions.GetPlayer(targetId)
             if not Player then
-                pcall(function() Player = exports['qb-core']:GetCoreObject().Functions.GetPlayer(targetId) end)
+                pcall(function() Player = exports['pradipta-core']:GetCoreObject().Functions.GetPlayer(targetId) end)
             end
             if Player then
                 if amount > 0 then Player.Functions.AddMoney('bank', amount, 'admin-menu')
@@ -219,7 +219,7 @@ RegisterNetEvent('xeno-adminmenu:server:ActionWithInput', function(action, targe
             end)
         end)
     end
-    
+
     if AddLog then
         local logCat = 'admin'
         if action == 'kick' then logCat = 'kick'
@@ -277,7 +277,7 @@ RegisterNetEvent('xeno-adminmenu:server:AllAction', function(type, reason)
     local src = source
     local role = GetPlayerAdminRole(src)
     if role ~= 'god' and role ~= 'admin' then return end
-    
+
     if type == 'bring' then
         local adminCoords = GetEntityCoords(GetPlayerPed(src))
         for _, playerId in ipairs(GetPlayers()) do
@@ -309,7 +309,7 @@ end)
 RegisterNetEvent('xeno-adminmenu:server:ClearArea', function(clearType)
     local src = source
     if not IsPlayerAdmin(src) then return end
-    
+
     if clearType == 'vehicles' then
         for _, vehicle in ipairs(GetAllVehicles()) do
             if DoesEntityExist(vehicle) then
@@ -334,9 +334,9 @@ end)
 RegisterNetEvent('xeno-adminmenu:server:ChangeWarn', function(warnId, changeType, currentActive)
     local src = source
     if not IsPlayerAdmin(src) then return end
-    
+
     DebugLog('DEBUG ChangeWarn:', warnId, changeType, currentActive)
-    
+
     if changeType == 'activeToggle' then
         local newActive = not currentActive
         exports.oxmysql:execute('UPDATE xeno_admin_warns SET active = ? WHERE id = ?', {newActive and 1 or 0, warnId}, function(affectedRows)
@@ -360,7 +360,7 @@ local function SendResourcesToPlayer(src)
             local author = GetResourceMetadata(resName, 'author', 0) or 'Unknown'
             local description = GetResourceMetadata(resName, 'description', 0) or 'No description'
             local version = GetResourceMetadata(resName, 'version', 0) or '1.0.0'
-            
+
             table.insert(resources, {
                 name = resName,
                 status = state:sub(1,1):upper() .. state:sub(2),
@@ -380,7 +380,7 @@ RegisterNetEvent('xeno-adminmenu:server:RequestResources', function()
 end)
 
 local ProtectedCoreResources = {
-    ['qb-core'] = true,
+    ['pradipta-core'] = true,
     ['oxmysql'] = true,
     ['ox_lib'] = true,
     ['xeno-adminmenu'] = true,
@@ -393,7 +393,7 @@ RegisterNetEvent('xeno-adminmenu:server:ResourceAction', function(action, resNam
     local role = GetPlayerAdminRole(src)
     if role ~= 'god' and role ~= 'admin' then return end
     if not resName or type(resName) ~= 'string' then return end
-    
+
     local lowerRes = string.lower(resName)
     if action == 'stop' and ProtectedCoreResources[lowerRes] then
         TriggerClientEvent('chat:addMessage', src, {
@@ -419,7 +419,7 @@ RegisterNetEvent('xeno-adminmenu:server:ResourceAction', function(action, resNam
         StartResource(resName)
         if AddLog then AddLog('system', 'Restarted resource: ' .. resName, name, nil, { resource = resName }, 'server_restart') end
     end
-    
+
     Wait(500)
     SendResourcesToPlayer(src)
 end)
@@ -466,7 +466,7 @@ RegisterNetEvent('xeno-adminmenu:server:ExecuteCommand', function(cmd)
         })
         return
     end
-    
+
     local name = GetPlayerName(src)
     BroadcastTerminalLog("admin", name .. " executed command: " .. cmd)
     ExecuteCommand(cmd)
@@ -526,7 +526,7 @@ end, false)
 RegisterNetEvent('xeno-adminmenu:server:SubmitReport', function(data)
     local src = source
     local senderName = GetPlayerName(src)
-    
+
     exports.oxmysql:insert('INSERT INTO xeno_admin_reports (sender, type, title, reported, reason, status) VALUES (?, ?, ?, ?, ?, ?)', {
         senderName,
         data.type or 'player',
@@ -555,7 +555,7 @@ end)
 RegisterNetEvent('xeno-adminmenu:server:FetchReports', function()
     local src = source
     if src ~= "" and type(src) == "number" and src > 0 and not IsPlayerAdmin(src) then return end
-    
+
     exports.oxmysql:execute('SELECT * FROM xeno_admin_reports ORDER BY id DESC LIMIT 50', {}, function(results)
         local formatted = {}
         for _, r in ipairs(results) do
@@ -570,7 +570,7 @@ RegisterNetEvent('xeno-adminmenu:server:FetchReports', function()
                 date = tostring(r.date)
             })
         end
-        
+
         if type(src) == "number" and src > 0 then
             TriggerClientEvent('xeno-adminmenu:client:ReceiveReports', src, formatted)
         else
@@ -586,7 +586,7 @@ end)
 RegisterNetEvent('xeno-adminmenu:server:UpdateReportStatus', function(reportId, newStatus)
     local src = source
     if not IsPlayerAdmin(src) then return end
-    
+
     if newStatus == 'delete' then
         exports.oxmysql:execute('DELETE FROM xeno_admin_reports WHERE id = ?', {reportId}, function()
             TriggerEvent('xeno-adminmenu:server:FetchReports')
@@ -630,24 +630,24 @@ end)
 RegisterNetEvent('xeno-adminmenu:server:SendChatMessage', function(data)
     local src = source
     if not IsPlayerAdmin(src) then return end
-    
+
     local name = GetPlayerName(src)
     table.insert(AdminChatMessages, {
         author = name,
         message = data.message,
         timestamp = data.timestamp
     })
-    
+
     if #AdminChatMessages > 100 then
         table.remove(AdminChatMessages, 1)
     end
-    
+
     for _, playerId in ipairs(GetPlayers()) do
         if IsPlayerAdmin(playerId) then
             TriggerClientEvent('xeno-adminmenu:client:ReceiveChatMessages', playerId, AdminChatMessages)
         end
     end
-    
+
     if AddLog then AddLog('admin', 'Admin Chat: ' .. data.message, name, nil, { message = data.message }, 'chat_message') end
 end)
 
@@ -677,7 +677,7 @@ RegisterNetEvent('xeno-adminmenu:server:GlobalAnnouncement', function(data)
     })
 
     -- 3. Sender feedback notification
-    TriggerClientEvent('QBCore:Notify', src, 'Announcement sent successfully to all players.', 'success', 5000)
+    TriggerClientEvent('PradiptaCore:Notify', src, 'Announcement sent successfully to all players.', 'success', 5000)
 
     -- 4. Audit logging
     if AddLog then

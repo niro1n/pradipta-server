@@ -127,7 +127,7 @@ end
 CreateThread(function()
     while true do
         local sleep = 1000
-        
+
         if isSuperJump then
             sleep = 0
             SetSuperJumpThisFrame(PlayerId())
@@ -137,7 +137,7 @@ CreateThread(function()
             sleep = 0
             RestorePlayerStamina(PlayerId(), 1.0)
         end
-        
+
         if isVehicleGodmode then
             local ped = PlayerPedId()
             local veh = GetVehiclePedIsIn(ped, false)
@@ -175,7 +175,7 @@ CreateThread(function()
                 coords = { x = coords.x, y = coords.y, z = coords.z, h = heading }
             })
         end
-        
+
         Wait(sleep)
     end
 end)
@@ -195,13 +195,13 @@ RegisterNUICallback('kick', function(data, cb)
 end)
 
 RegisterNUICallback('banPlayer', function(data, cb)
-    
+
     TriggerServerEvent('xeno-adminmenu:server:BanPlayer', data.playerId, data.isOffline, data.reason, data.durationHours)
     if cb then cb('ok') end
 end)
 
 RegisterNUICallback('fetchBans', function(data, cb)
-    
+
     TriggerServerEvent('xeno-adminmenu:server:FetchBans', data.page, data.limit, data.search, data.filter)
     if cb then cb('ok') end
 end)
@@ -245,7 +245,7 @@ RegisterNUICallback('inspectInventory', function(data, cb)
 end)
 
 RegisterNetEvent('xeno-adminmenu:client:OpenTargetInventory', function(targetId, invType)
-    if invType == 'qb-inventory' or invType == 'ps-inventory' or invType == 'lj-inventory' or invType == 'qs-inventory' then
+    if invType == 'pradipta-inventory' or invType == 'ps-inventory' or invType == 'lj-inventory' or invType == 'qs-inventory' then
         TriggerServerEvent("inventory:server:OpenInventory", "otherplayer", targetId)
     end
 end)
@@ -313,8 +313,8 @@ RegisterNUICallback('upgradeVehicle', function(data, cb)
                 SetVehicleMod(vehicle, i, max, false)
             end
         end
-        ToggleVehicleMod(vehicle, 18, true) 
-        ToggleVehicleMod(vehicle, 22, true) 
+        ToggleVehicleMod(vehicle, 18, true)
+        ToggleVehicleMod(vehicle, 22, true)
     end
     if cb then cb('ok') end
 end)
@@ -365,7 +365,7 @@ RegisterNUICallback('dynamicWeather', function(data, cb)
 end)
 
 RegisterNUICallback('instantWeather', function(data, cb)
-    
+
     if Config.WeatherSync.Enabled then
         _G.XenoInstantWeather = data.state
         DebugLog('[WeatherSync] Instant weather set to: ' .. tostring(data.state))
@@ -374,7 +374,7 @@ RegisterNUICallback('instantWeather', function(data, cb)
 end)
 
 RegisterNUICallback('tsunami', function(data, cb)
-    
+
     if data.state then
         SetWeatherTypeNowPersist('THUNDER')
         SetWeatherTypeNow('THUNDER')
@@ -390,7 +390,7 @@ RegisterNUICallback('tsunami', function(data, cb)
         SetWindSpeed(0.0)
         ResetScenarioTypesEnabled()
         StopGameplayCamShaking(true)
-        
+
         TriggerServerEvent('xeno-adminmenu:server:requestSyncState')
     end
     if cb then cb('ok') end
@@ -402,8 +402,8 @@ RegisterNUICallback('deleteObjects', function(data, cb)
 end)
 
 RegisterNUICallback('changeSkin', function(data, cb)
-    if GetResourceState('qb-clothing') == 'started' then
-        TriggerEvent('qb-clothing:client:openOutfitMenu')
+    if GetResourceState('pradipta-clothing') == 'started' then
+        TriggerEvent('pradipta-clothing:client:openOutfitMenu')
     elseif GetResourceState('illenium-appearance') == 'started' then
         TriggerEvent('illenium-appearance:client:openOutfitMenu')
     elseif GetResourceState('fivem-appearance') == 'started' then
@@ -413,8 +413,8 @@ RegisterNUICallback('changeSkin', function(data, cb)
 end)
 
 RegisterNUICallback('clothingMenu', function(data, cb)
-    if GetResourceState('qb-clothing') == 'started' then
-        TriggerEvent('qb-clothing:client:openMenu')
+    if GetResourceState('pradipta-clothing') == 'started' then
+        TriggerEvent('pradipta-clothing:client:openMenu')
     elseif GetResourceState('illenium-appearance') == 'started' then
         TriggerEvent('illenium-appearance:client:openClothingShopMenu')
     elseif GetResourceState('fivem-appearance') == 'started' then
@@ -490,7 +490,7 @@ RegisterNetEvent('xeno-adminmenu:client:Spectate', function(targetServerId)
     local myPed = PlayerPedId()
     local targetPlayer = GetPlayerFromServerId(targetServerId)
     local targetPed = GetPlayerPed(targetPlayer)
-    
+
     if not isSpectating then
         isSpectating = true
         SetEntityVisible(myPed, false)
@@ -601,14 +601,14 @@ RegisterNetEvent('xeno-adminmenu:client:SpawnVehicle', function(model)
     local heading = GetEntityHeading(ped)
     if not model or model == "" then return end
 
-    local QBCore = exports['qb-core']:GetCoreObject()
-    QBCore.Functions.SpawnVehicle(model, function(veh)
+    local PradiptaCore = exports['pradipta-core']:GetCoreObject()
+    PradiptaCore.Functions.SpawnVehicle(model, function(veh)
         SetEntityHeading(veh, heading)
         TaskWarpPedIntoVehicle(ped, veh, -1)
-        local plate = QBCore.Functions.GetPlate(veh)
+        local plate = PradiptaCore.Functions.GetPlate(veh)
         TriggerEvent("vehiclekeys:client:SetOwner", plate)
-        if GetResourceState('qb-fuel') == 'started' then
-            exports['qb-fuel']:SetFuel(veh, 100.0)
+        if GetResourceState('pradipta-fuel') == 'started' then
+            exports['pradipta-fuel']:SetFuel(veh, 100.0)
         end
         SetVehicleEngineOn(veh, true, true)
     end, coords, true, true)

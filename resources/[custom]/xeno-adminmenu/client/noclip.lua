@@ -1,4 +1,4 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local PradiptaCore = exports['pradipta-core']:GetCoreObject()
 
 local IsNoClipping      = false
 local PlayerPed         = nil
@@ -253,15 +253,15 @@ function ToggleNoClip(state)
     end
 
     if IsNoClipping then
-        QBCore.Functions.Notify("NoClip Enabled", "success")
+        PradiptaCore.Functions.Notify("NoClip Enabled", "success")
         RunNoClipThread()
     else
-        QBCore.Functions.Notify("NoClip Disabled", "error")
+        PradiptaCore.Functions.Notify("NoClip Disabled", "error")
     end
 end
 
 RegisterNetEvent('xeno-adminmenu:client:ToggleNoClip', function()
-    
+
     ToggleNoClip(not IsNoClipping)
     SendNUIMessage({
         action = "setPowerState",

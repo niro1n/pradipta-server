@@ -1,7 +1,7 @@
 CreateThread(function()
-    Wait(2000) 
+    Wait(2000)
 
-    
+
     exports.oxmysql:execute([[
         CREATE TABLE IF NOT EXISTS `xeno_admin_warns` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -16,7 +16,7 @@ CreateThread(function()
         DebugLog('^2[Xeno-AdminMenu] Checked/Created table: xeno_admin_warns^0')
     end)
 
-    
+
     exports.oxmysql:execute([[
         CREATE TABLE IF NOT EXISTS `xeno_admin_bans` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -71,7 +71,7 @@ CreateThread(function()
     ]], {}, function()
         DebugLog('^2[Xeno-AdminMenu] Checked/Created table: xeno_admin_reports^0')
     end)
-    
+
     exports.oxmysql:execute([[
         CREATE TABLE IF NOT EXISTS `xeno_admin_playtime` (
             `identifier` varchar(50) NOT NULL,
@@ -81,10 +81,10 @@ CreateThread(function()
     ]], {}, function()
         DebugLog('^2[Xeno-AdminMenu] Checked/Created table: xeno_admin_playtime^0')
     end)
-    
+
     MySQL.query.await('SET FOREIGN_KEY_CHECKS = 1')
 
-    
+
     MySQL.query.await([[
         CREATE TABLE IF NOT EXISTS `xeno_admin_groups` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -99,7 +99,7 @@ CreateThread(function()
     ]])
     DebugLog('^2[Xeno-AdminMenu] Checked/Created table: xeno_admin_groups^0')
 
-    
+
     MySQL.query.await([[
         CREATE TABLE IF NOT EXISTS `xeno_admin_staff` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -128,7 +128,7 @@ CreateThread(function()
     ]])
     DebugLog('^2[Xeno-AdminMenu] Checked/Created table: xeno_admin_staff^0')
 
-    
+
     exports.oxmysql:execute([[
         CREATE TABLE IF NOT EXISTS `xeno_admin_webhooks` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -144,7 +144,7 @@ CreateThread(function()
         DebugLog('^2[Xeno-AdminMenu] Checked/Created table: xeno_admin_webhooks^0')
     end)
 
-    
+
     exports.oxmysql:execute([[
         CREATE TABLE IF NOT EXISTS `xeno_admin_logs` (
             `id` int(11) NOT NULL AUTO_INCREMENT,

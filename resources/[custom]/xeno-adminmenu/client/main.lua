@@ -3,7 +3,7 @@ local isQuickMenuOpen = false
 
 local function ToggleAdminMenu()
     isMenuOpen = not isMenuOpen
-    
+
     if isMenuOpen then
         TriggerServerEvent('xeno-adminmenu:server:CheckRegistrationStatus')
         SetNuiFocus(true, true)
@@ -38,7 +38,7 @@ RegisterNetEvent('xeno-adminmenu:client:RegistrationStatus', function(data)
         status = data.status,
         reason = data.reason
     })
-    
+
     if data.status == 'approved' then
         TriggerServerEvent('xeno-adminmenu:server:RequestDashboardStats')
         TriggerServerEvent('xeno-adminmenu:server:RequestPlayersData')
@@ -54,10 +54,10 @@ end, false)
 RegisterNetEvent('xeno-adminmenu:client:ToggleQuickMenu', function()
     DebugLog('ToggleQuickMenu triggered from server')
     isQuickMenuOpen = not isQuickMenuOpen
-    
+
     if isQuickMenuOpen then
         TriggerServerEvent('xeno-adminmenu:server:RequestPlayersData')
-        SetNuiFocus(true, false) 
+        SetNuiFocus(true, false)
         SendNUIMessage({
             action = 'setQuickMenuStatus',
             status = true
@@ -82,7 +82,7 @@ RegisterNetEvent('xeno-adminmenu:client:ReceiveDashboardStats', function(stats)
         serverName = stats.serverName,
         serverUptime = stats.serverUptime
     })
-    
+
     SendNUIMessage({
         action = 'changeEconomyStatus',
         totalMoney = stats.totalMoney,
@@ -95,7 +95,7 @@ RegisterNetEvent('xeno-adminmenu:client:ReceivePlayersData', function(data)
         action = 'setPlayers',
         players = data.players
     })
-    
+
     SendNUIMessage({
         action = 'setPlayersDataStats',
         averageMoney = data.averageMoney,

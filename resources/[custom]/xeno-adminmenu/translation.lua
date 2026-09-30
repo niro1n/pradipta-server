@@ -643,7 +643,7 @@ Locales = {
             tlCustomTime = "Custom Time",
             tlServerAnnouncement = "Server Announcement",
 
-        
+
         }
     }
 }

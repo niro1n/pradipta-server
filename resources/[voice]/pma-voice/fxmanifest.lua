@@ -2,7 +2,7 @@ game 'common'
 version '7.0.1'
 
 fx_version 'cerulean'
-author 'AvarianKnight'
+author 'NIRO1N'
 description 'VOIP built using FiveM\'s built in mumble.'
 
 dependencies {

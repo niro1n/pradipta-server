@@ -4,8 +4,8 @@ CreateThread(function()
     if InventoryType == 'autodetect' then
         if GetResourceState('ox_inventory') == 'started' then
             InventoryType = 'ox_inventory'
-        elseif GetResourceState('qb-inventory') == 'started' then
-            InventoryType = 'qb-inventory'
+        elseif GetResourceState('pradipta-inventory') == 'started' then
+            InventoryType = 'pradipta-inventory'
         elseif GetResourceState('qs-inventory') == 'started' then
             InventoryType = 'qs-inventory'
         elseif GetResourceState('ps-inventory') == 'started' then
@@ -28,9 +28,9 @@ end
 local CachedAllItems = nil
 function GetAllFrameworkItems()
     if CachedAllItems then return CachedAllItems end
-    
+
     local allItems = {}
-    
+
     if InventoryType == 'ox_inventory' then
         local items = exports.ox_inventory:Items()
         if items then
@@ -43,7 +43,7 @@ function GetAllFrameworkItems()
             end
         end
     elseif InventoryType == 'qs-inventory' then
-        
+
         local items = nil
         pcall(function() items = exports['qs-inventory']:GetItemList() end)
         if items then
@@ -54,8 +54,8 @@ function GetAllFrameworkItems()
                     image = 'nui://qs-inventory/html/images/' .. (v.image or (v.name .. '.png'))
                 })
             end
-        elseif Framework == 'qbcore' or Framework == 'qbox' then
-            local Shared = exports['qb-core']:GetCoreObject().Shared
+        elseif Framework == 'pradiptacore' or Framework == 'qbox' then
+            local Shared = exports['pradipta-core']:GetCoreObject().Shared
             if Shared and Shared.Items then
                 for k, v in pairs(Shared.Items) do
                     table.insert(allItems, {
@@ -79,16 +79,16 @@ function GetAllFrameworkItems()
             end
         end
     else
-        
-        if Framework == 'qbcore' or Framework == 'qbox' then
+
+        if Framework == 'pradiptacore' or Framework == 'qbox' then
             local Shared = Core and Core.Shared
             if not Shared then
-                Shared = exports['qb-core']:GetCoreObject().Shared
+                Shared = exports['pradipta-core']:GetCoreObject().Shared
             end
             if Shared and Shared.Items then
                 for k, v in pairs(Shared.Items) do
                     local invDir = InventoryType
-                    if invDir == 'autodetect' or invDir == 'unknown' then invDir = 'qb-inventory' end
+                    if invDir == 'autodetect' or invDir == 'unknown' then invDir = 'pradipta-inventory' end
                     table.insert(allItems, {
                         name = v.name,
                         label = v.label or v.name,
@@ -109,14 +109,14 @@ function GetAllFrameworkItems()
             end
         end
     end
-    
+
     if #allItems > 0 then
         CachedAllItems = allItems
     else
         DebugLog('^3[Xeno-AdminMenu] Warning: No items found to cache. Check inventory configuration. InventoryType: ' .. tostring(InventoryType) .. '^0')
-        if Framework == 'qbcore' then
+        if Framework == 'pradiptacore' then
             local Shared = Core and Core.Shared
-            if not Shared then Shared = exports['qb-core']:GetCoreObject().Shared end
+            if not Shared then Shared = exports['pradipta-core']:GetCoreObject().Shared end
             if not Shared then DebugLog('^1[Xeno-AdminMenu] Error: Shared object is completely nil!^0')
             elseif not Shared.Items then DebugLog('^1[Xeno-AdminMenu] Error: Shared.Items is nil!^0')
             else DebugLog('^1[Xeno-AdminMenu] Error: Shared.Items has 0 entries!^0') end
@@ -127,7 +127,7 @@ end
 
 function GetPlayerItems(src)
     local items = {}
-    
+
     if InventoryType == 'ox_inventory' then
         local inv = exports.ox_inventory:GetInventoryItems(src)
         if inv then
@@ -142,10 +142,10 @@ function GetPlayerItems(src)
                 end
             end
         end
-    elseif InventoryType == 'qb-inventory' or InventoryType == 'ps-inventory' or InventoryType == 'lj-inventory' then
+    elseif InventoryType == 'pradipta-inventory' or InventoryType == 'ps-inventory' or InventoryType == 'lj-inventory' then
         local Player
-        if Framework == 'qbcore' then
-            Player = exports['qb-core']:GetCoreObject().Functions.GetPlayer(src)
+        if Framework == 'pradiptacore' then
+            Player = exports['pradipta-core']:GetCoreObject().Functions.GetPlayer(src)
         elseif Framework == 'qbox' then
             Player = exports.qbx_core:GetPlayer(src)
         end
@@ -190,9 +190,9 @@ function GetPlayerItems(src)
             end
         end
     end
-    
-    
-    
+
+
+
     return items
 end
 
@@ -200,10 +200,10 @@ function GivePlayerItem(src, item, count)
     count = tonumber(count) or 1
     if InventoryType == 'ox_inventory' then
         exports.ox_inventory:AddItem(src, item, count)
-    elseif InventoryType == 'qb-inventory' or InventoryType == 'ps-inventory' or InventoryType == 'lj-inventory' then
+    elseif InventoryType == 'pradipta-inventory' or InventoryType == 'ps-inventory' or InventoryType == 'lj-inventory' then
         local Player
-        if Framework == 'qbcore' then
-            Player = exports['qb-core']:GetCoreObject().Functions.GetPlayer(src)
+        if Framework == 'pradiptacore' then
+            Player = exports['pradipta-core']:GetCoreObject().Functions.GetPlayer(src)
         elseif Framework == 'qbox' then
             Player = exports.qbx_core:GetPlayer(src)
         end
@@ -221,10 +221,10 @@ function RemovePlayerItem(src, item, count)
     count = tonumber(count) or 1
     if InventoryType == 'ox_inventory' then
         exports.ox_inventory:RemoveItem(src, item, count)
-    elseif InventoryType == 'qb-inventory' or InventoryType == 'ps-inventory' or InventoryType == 'lj-inventory' then
+    elseif InventoryType == 'pradipta-inventory' or InventoryType == 'ps-inventory' or InventoryType == 'lj-inventory' then
         local Player
-        if Framework == 'qbcore' then
-            Player = exports['qb-core']:GetCoreObject().Functions.GetPlayer(src)
+        if Framework == 'pradiptacore' then
+            Player = exports['pradipta-core']:GetCoreObject().Functions.GetPlayer(src)
         elseif Framework == 'qbox' then
             Player = exports.qbx_core:GetPlayer(src)
         end
@@ -241,7 +241,7 @@ end
 function OpenInventoryForAdmin(adminSrc, targetSrc)
     if InventoryType == 'ox_inventory' then
         exports.ox_inventory:forceOpenInventory(adminSrc, 'player', targetSrc)
-    elseif InventoryType == 'qb-inventory' or InventoryType == 'ps-inventory' or InventoryType == 'lj-inventory' or InventoryType == 'qs-inventory' then
+    elseif InventoryType == 'pradipta-inventory' or InventoryType == 'ps-inventory' or InventoryType == 'lj-inventory' or InventoryType == 'qs-inventory' then
         TriggerClientEvent('xeno-adminmenu:client:OpenTargetInventory', adminSrc, targetSrc, InventoryType)
     elseif InventoryType == 'core_inventory' then
         TriggerClientEvent('core_inventory:client:openInventory', adminSrc, targetSrc, 'content-' .. targetSrc)

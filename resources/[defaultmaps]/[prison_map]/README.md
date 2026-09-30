@@ -1,5 +1,5 @@
 # prison_map
-Maps Used With QB-Prison
+Maps Used With PRADIPTA-Prison
 
 We take NO credit for this map. It is just used for the resource.
 

@@ -1,5 +1,5 @@
 # hospital_map
-Map Used With QB-Ambulancejob
+Map Used With PRADIPTA-Ambulancejob
 
 We take NO credit for this map. It is just used for the resource.
 
