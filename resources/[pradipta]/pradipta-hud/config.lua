@@ -1,177 +1,406 @@
-Config = {}
-Config.OpenMenu = 'I'             -- https://docs.fivem.net/docs/game-references/input-mapper-parameter-ids/keyboard/
-Config.StressChance = 0.1         -- Default: 10% -- Percentage Stress Chance When Shooting (0-1)
-Config.UseMPH = true              -- If true speed math will be done as MPH, if false KPH will be used (YOU HAVE TO CHANGE CONTENT IN STYLES.CSS TO DISPLAY THE CORRECT TEXT)
-Config.MinimumStress = 50         -- Minimum Stress Level For Screen Shaking
-Config.MinimumSpeedUnbuckled = 50 -- Going Over This Speed Unbuckled Will Cause Stress
-Config.MinimumSpeed = 100
-Config.DisableStress = true
+Config                         = Config or {}
 
--- Stress
-Config.WhitelistedWeaponArmed = { -- Disable showing armed icon from weapons in this table
-    -- miscellaneous
-    [`weapon_petrolcan`] = true,
-    [`weapon_hazardcan`] = true,
-    [`weapon_fireextinguisher`] = true,
-    -- melee
-    [`weapon_dagger`] = true,
-    [`weapon_bat`] = true,
-    [`weapon_bottle`] = true,
-    [`weapon_crowbar`] = true,
-    [`weapon_flashlight`] = true,
-    [`weapon_golfclub`] = true,
-    [`weapon_hammer`] = true,
-    [`weapon_hatchet`] = true,
-    [`weapon_knuckle`] = true,
-    [`weapon_knife`] = true,
-    [`weapon_machete`] = true,
-    [`weapon_switchblade`] = true,
-    [`weapon_nightstick`] = true,
-    [`weapon_wrench`] = true,
-    [`weapon_battleaxe`] = true,
-    [`weapon_poolcue`] = true,
-    [`weapon_briefcase`] = true,
-    [`weapon_briefcase_02`] = true,
-    [`weapon_garbagebag`] = true,
-    [`weapon_handcuffs`] = true,
-    [`weapon_bread`] = true,
-    [`weapon_stone_hatchet`] = true,
-    -- throwables
-    [`weapon_grenade`] = true,
-    [`weapon_bzgas`] = true,
-    [`weapon_molotov`] = true,
-    [`weapon_stickybomb`] = true,
-    [`weapon_proxmine`] = true,
-    [`weapon_snowball`] = true,
-    [`weapon_pipebomb`] = true,
-    [`weapon_ball`] = true,
-    [`weapon_smokegrenade`] = true,
-    [`weapon_flare`] = true
+Config.Framework               = "auto" 
+Config.Locale                  = "en-US" 
+
+Config.WeaponImageInventory    = "pradipta-inventory"
+
+Config.WeaponImages            = {
+    
 }
 
-Config.WhitelistedWeaponStress = { -- Disable gaining stress from weapons in this table
-    [`weapon_petrolcan`] = true,
-    [`weapon_hazardcan`] = true,
-    [`weapon_fireextinguisher`] = true
+Config.DEBUG                   = false     
+
+Config.HighlightColor          = "#f44336" 
+
+Config.Currency = "$_"
+
+Config.HighlightSecondaryColor = "#d32f2f" 
+
+Config.Font                    = {
+    enabled = false,
+    family  = "Cairo",
+    url     = "https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap",
 }
 
-Config.VehClassStress = { -- Enable/Disable gaining stress from vehicle classes in this table
-    ['0'] = true,         -- Compacts
-    ['1'] = true,         -- Sedans
-    ['2'] = true,         -- SUVs
-    ['3'] = true,         -- Coupes
-    ['4'] = true,         -- Muscle
-    ['5'] = true,         -- Sports Classics
-    ['6'] = true,         -- Sports
-    ['7'] = true,         -- Super
-    ['8'] = true,         -- Motorcycles
-    ['9'] = true,         -- Off Road
-    ['10'] = true,        -- Industrial
-    ['11'] = true,        -- Utility
-    ['12'] = true,        -- Vans
-    ['13'] = false,       -- Cycles
-    ['14'] = false,       -- Boats
-    ['15'] = false,       -- Helicopters
-    ['16'] = false,       -- Planes
-    ['18'] = false,       -- Emergency
-    ['19'] = false,       -- Military
-    ['20'] = false,       -- Commercial
-    ['21'] = false        -- Trains
+Config.HideNativeTexts         = {
+    vehicleName  = true, 
+    vehicleClass = true, 
+    areaName     = true, 
+    streetName   = true, 
 }
 
-Config.WhitelistedVehicles = { -- Disable gaining stress from speeding in any vehicle in this table
-    --[`adder`] = true
+Config.ServerLogo              = {
+    enabled = true,              
+    logo    = "assets/logo.png", 
+    opacity = 1.0,
 }
 
-Config.WhitelistedJobs = { -- Disable stress completely for players with matching job or job type
-    ['leo'] = true,
-    ['ambulance'] = true
+Config.MinimapTransition       = {
+    enabled   = true,
+    showLogo  = true,                                               
+    logo      = "logo.png",                                
+    logoScale = 0.5,                                                
+    color     = "linear-gradient(180deg, #1c1b1f 0%, #2b2930 100%)", 
+    style     = "slide",                                            
+    timing    = { open = 320, hold = 260, close = 480 },
+    
+    inset     = { top = 0.012, right = 0.016, bottom = 0.004, left = -0.008 },
+    
+    circle    = { cx = 0.460, cy = 0.500, rx = 0.489, ry = 0.558 },
 }
 
-Config.Intensity = {
-    ['blur'] = {
-        [1] = {
-            min = 50,
-            max = 60,
-            intensity = 1500,
-        },
-        [2] = {
-            min = 60,
-            max = 70,
-            intensity = 2000,
-        },
-        [3] = {
-            min = 70,
-            max = 80,
-            intensity = 2500,
-        },
-        [4] = {
-            min = 80,
-            max = 90,
-            intensity = 2700,
-        },
-        [5] = {
-            min = 90,
-            max = 100,
-            intensity = 3000,
-        },
-    }
+Config.Mileage                 = {
+    provider     = "builtin",
+    persistent   = true,
+    saveInterval = 60, 
 }
 
-Config.EffectInterval = {
-    [1] = {
-        min = 50,
-        max = 60,
-        timeout = math.random(50000, 60000)
+Config.VoiceIcon               = "lines"
+
+Config.VoiceScript             = "pma-voice"
+
+Config.SpeedUnit               = "kmh" 
+Config.EngineToggleKey         = "L" 
+Config.SeatbeltToggleKey       = "B" 
+
+Config.Engine                  = {
+    enabled = true,
+}
+
+Config.Nitro                   = {
+    enabled = false,
+}
+
+Config.Seatbelt                = {
+    enabled = true,
+
+    showIndicator = true,   
+    preventEjection = true, 
+    audioMode = "native",   
+    alarm = true,           
+    
+    ejection = {
+        minSpeed = 100, 
+        chance   = 50,  
     },
-    [2] = {
-        min = 60,
-        max = 70,
-        timeout = math.random(40000, 50000)
-    },
-    [3] = {
-        min = 70,
-        max = 80,
-        timeout = math.random(30000, 40000)
-    },
-    [4] = {
-        min = 80,
-        max = 90,
-        timeout = math.random(20000, 30000)
-    },
-    [5] = {
-        min = 90,
-        max = 100,
-        timeout = math.random(15000, 20000)
-    }
 }
 
-Config.Menu = {
-    isOutMapChecked = false,            -- isOutMapChecked
-    isOutCompassChecked = false,        -- isOutMapChecked
-    isCompassFollowChecked = true,      -- isCompassFollowChecked
-    isOpenMenuSoundsChecked = true,     -- isOpenMenuSoundsChecked
-    isResetSoundsChecked = true,        -- isResetSoundsChecked
-    isListSoundsChecked = true,         -- isListSoundsChecked
-    isMapNotifChecked = true,           -- isMapNotifChecked
-    isLowFuelChecked = true,            -- isLowFuelChecked
-    isCinematicNotifChecked = true,     -- isCinematicNotifChecked
-    isDynamicHealthChecked = true,      -- isDynamicHealthChecked
-    isDynamicArmorChecked = true,       -- isDynamicArmorChecked
-    isDynamicHungerChecked = true,      -- isDynamicHungerChecked
-    isDynamicThirstChecked = true,      -- isDynamicThirstChecked
-    isDynamicStressChecked = true,      -- isDynamicStressChecked
-    isDynamicOxygenChecked = true,      -- isDynamicOxygenChecked
-    isChangeFPSChecked = true,          -- isChangeFPSChecked
-    isHideMapChecked = false,           -- isHideMapChecked
-    isToggleMapBordersChecked = true,   -- isToggleMapBordersChecked
-    isDynamicEngineChecked = true,      -- isDynamicEngineChecked
-    isDynamicNitroChecked = true,       -- isDynamicNitroChecked
-    isChangeCompassFPSChecked = true,   -- isChangeCompassFPSChecked
-    isCompassShowChecked = true,        -- isShowCompassChecked
-    isShowStreetsChecked = true,        -- isShowStreetsChecked
-    isPointerShowChecked = true,        -- isPointerShowChecked
-    isDegreesShowChecked = true,        -- isDegreesShowChecked
-    isCinematicModeChecked = false,     -- isCinematicModeChecked
-    isToggleMapShapeChecked = 'square', -- isToggleMapShapeChecked
+Config.Settings                = {
+    enabled = true,
+
+    command = "hudsettings", 
+    keybind = {              
+        enabled = true,
+        defaultKey = "I",
+    },
 }
+
+Config.VehicleControl          = {
+    enabled = true, 
+
+    command = {
+        enabled = true,      
+        name = "carcontrol", 
+    },
+
+    keybind = {
+        enabled = true,   
+        defaultKey = "M", 
+    },
+
+    binds = {
+        enabled        = true,
+        indicatorLeft  = "LEFT",  
+        indicatorRight = "RIGHT", 
+        hazards        = "DOWN",  
+    },
+
+    allowOnFoot = false, 
+}
+
+Config.DefaultSettings         = {
+    
+    minimap = {
+        showOnFoot = true,          
+        style = "square",           
+        size = 1.0,                 
+        widthScale = 0.88,          
+        maxSize = 1.25,             
+        showNorthIndicator = true,  
+        showLongRangeBlips = false, 
+        useCustomMask = true,       
+        
+        customMap = {
+            enabled     = false, 
+            radarZoom   = 1100,  
+            refreshRate = 500,   
+        },
+
+        locked = false,         
+        lockedPosition = false, 
+    },
+
+    status = {
+        enabled = true,         
+        design = "v3",          
+        scale = nil,            
+        locked = false,         
+        lockedPosition = false, 
+
+        colors = {
+            health  = "#F64843",
+            hunger  = "#FFC548",
+            thirst  = "#38bdf8",
+            armor   = "#A0A0A0",
+            stress  = "#FF6DC6",
+            stamina = "#C4FF48",
+            oxygen  = "#85FF7A",
+            nitro   = "#BA65FF",
+        },
+        visibility = {
+            health  = true,
+            hunger  = true,
+            thirst  = true,
+            armor   = true,
+            stress  = true,
+            stamina = true,
+            oxygen  = true,
+            nitro   = true,
+        },
+        
+        autoHide = {
+            health  = false,
+            hunger  = false,
+            thirst  = false,
+            armor   = true,
+            stress  = false,
+            stamina = true,
+            oxygen  = true,
+            nitro   = true,
+        },
+    },
+
+    notification = {
+        enabled = true,         
+        style = "linear",       
+        theme = "colored",      
+        sound = true,           
+        volume = 50,            
+        opacity = 100,          
+        locked = false,         
+        lockedPosition = false, 
+    },
+
+    playerInfo = {
+        enabled = true,               
+        opacity = 100,                
+        accentColor = "4 90% 58%", 
+        colors = {
+            id = "#ffffff",           
+            time = "#e6e1e5",         
+            cash = "#FFFFFF",         
+            bank = "#26D090",         
+            job = "#ff8a65",          
+            dirty = "#B23B3B",        
+            gang = "#ffffff",         
+        },
+        showJob = true,               
+        showId = true,                
+        showTime = true,              
+        timeSource = "ingame",        
+        showBank = true,              
+        showCash = true,              
+        showDirtyMoney = true,        
+        showGang = true,              
+        showWeapon = true,            
+        scale = 1.0,                  
+        locked = false,               
+        lockedPosition = false,       
+    },
+
+    compass = {
+        enabled = true,         
+        showOnFoot = false,     
+        style = "default",      
+        opacity = 100,          
+        showDirection = true,   
+        showStreet = true,      
+        showZone = true,        
+        scale = 1.0,            
+        locked = false,         
+        lockedPosition = false, 
+    },
+
+    voice = {
+        location = "status", 
+        color = "",          
+    },
+
+    progressBar = {
+        enabled = true,         
+        style = "linear-slim",  
+        color = "primary",      
+        borderRadius = "full",  
+        scale = 1.0,            
+        locked = false,         
+        lockedPosition = false, 
+    },
+
+    speedometer = {
+        enabled = true,                 
+        style = "round-modern",         
+        highlight = true,               
+        highlightColor = "4 90% 58%", 
+        scale = 1.0,                    
+        locked = false,                 
+        lockedPosition = false,         
+    },
+}
+
+Config.ControlHints            = {
+    enabled = false,
+    position = "center-right", 
+    hints = {
+        { label = "Open Phone", key = "F1" },
+        { label = "Inventory",  key = "TAB" },
+    },
+}
+
+Config.Stress                  = {
+    integrated = true,   
+    decayPerMinute = 10, 
+    minimumValue = 0,    
+    maximumValue = 100,  
+
+    jobWhitelist = { 'police', 'sheriff', 'ambulance', 'doctor' },
+
+    driving = {
+        enabled = true,
+        speedUnit = 'kmh', 
+        thresholds = {
+            { minSpeed = 80,  perTick = 2 },
+            { minSpeed = 120, perTick = 5 },
+            { minSpeed = 180, perTick = 10 },
+        },
+        tickIntervalMs = 10000,
+    },
+
+    shooting = {
+        enabled = true,
+        perShot = 5,
+        weaponBlacklist = {
+            'weapon_petrolcan',
+            'weapon_fireextinguisher',
+            'weapon_flashlight',
+        },
+    },
+
+    effects = {
+        screenBlur             = true, 
+        screenShake            = true, 
+        vehicleAction          = true, 
+        steerImpairment        = true, 
+        healthRegenMultiplier  = true, 
+        weaponDamageMultiplier = true, 
+    },
+
+    onTick = {
+        {
+            minValue = 50,
+            interval = 60000,
+            screenBlur = true,
+            screenShake = nil,
+            vehicleAction = false,
+            healthRegenMultiplier = 0.5, 
+        },
+        {
+            minValue = 75,
+            interval = 12000, 
+            screenBlur = true,
+            screenShake = 0.07,
+            vehicleAction = 80,            
+            steerImpairment = 0.15,        
+            healthRegenMultiplier = 0.25,
+            weaponDamageMultiplier = 0.85, 
+        },
+        {
+            minValue = 90,
+            interval = 8000, 
+            screenBlur = true,
+            screenShake = 0.10,
+            vehicleAction = true,        
+            steerImpairment = 0.30,      
+            healthRegenMultiplier = 0.0, 
+            weaponDamageMultiplier = 0.7,
+        },
+    },
+}
+
+Config.PlayerInfo              = {
+    tickInterval         = 5000,
+    ammoTickInterval     = 250,
+    ammoShootingInterval = 50,
+    unarmedTickInterval  = 1000,
+}
+
+Config.HungerThirstAlert       = {
+    enabled       = true,
+    tiers         = {
+        { threshold = 20, localeKey = "low" },
+        { threshold = 10, localeKey = "medium" },
+        { threshold = 5,  localeKey = "critical" },
+    },
+    minInterval   = 2000,
+    checkInterval = 5000,
+    sound         = {
+        enabled = true,
+        file    = "hungry.ogg",
+        volume  = 0.1,
+    },
+}
+
+Config.Cinematic               = {
+    enabled = true,        
+    command = "cinematic", 
+    barHeightPercent = 12, 
+    barColor = "#000000",  
+    transitionMs = 700,    
+    hideHud = true,        
+    hideMinimap = true,    
+    hideGameHud = true,    
+}
+
+Config.GlobalConfig            = {
+    enabled = false,                 
+    filename = "global-config.json", 
+    allowEdit = false,               
+}
+
+Config.MinimapWatchdog         = {
+    enabled              = false, 
+    intervalMs           = 1000,  
+    continuous           = false, 
+    enforceFrameInterval = 300,   
+}
+
+Config.CustomMap               = {
+    enabled     = true, 
+    radarZoom   = 1100, 
+    refreshRate = 500,  
+}
+
+Config.CustomPills = {
+}
+
+Config.CustomStatuses = {
+}
+
+Config.CustomStreetNames = {
+    
+}
+
+Config.CustomZoneNames = {
+    
+}
+
